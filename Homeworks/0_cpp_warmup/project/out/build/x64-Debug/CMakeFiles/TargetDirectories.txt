@@ -18,6 +18,9 @@ C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/U
 C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/2_EfficientDArray/CMakeFiles/2_EfficientDArray.dir
 C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/2_EfficientDArray/CMakeFiles/edit_cache.dir
 C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/2_EfficientDArray/CMakeFiles/rebuild_cache.dir
+C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/3_TemplateDArray/CMakeFiles/3_TemplateDArray.dir
+C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/3_TemplateDArray/CMakeFiles/edit_cache.dir
+C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/3_TemplateDArray/CMakeFiles/rebuild_cache.dir
 C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/4_list_Polynomial/CMakeFiles/4_list_Polynomial.dir
 C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/4_list_Polynomial/CMakeFiles/edit_cache.dir
 C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/4_list_Polynomial/CMakeFiles/rebuild_cache.dir

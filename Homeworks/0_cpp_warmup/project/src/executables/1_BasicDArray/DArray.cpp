@@ -11,11 +11,13 @@ DArray::DArray() {
 DArray::DArray(int nSize, double dValue) {
 	Init();
 
-	//Error
+	//Error: negative
 	if (nSize < 0) {
 		std::cout << "Cannot set array size which is less than 0!" << std::endl;
 		return;
 	}
+
+	//Special: 0
 	if (nSize == 0) {
 		m_pData = nullptr;
 		m_nSize = 0;

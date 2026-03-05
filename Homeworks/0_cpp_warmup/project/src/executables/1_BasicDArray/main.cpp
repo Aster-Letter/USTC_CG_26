@@ -44,5 +44,7 @@ int main(int argc, char** argv) {
 	c.InsertAt(0, 'd');
 	c.Print();
 
+	system("pause");
+
 	return 0;
 }

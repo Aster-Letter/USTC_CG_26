@@ -1,8 +1,8 @@
 # ninja log v6
-181	791	7944047544969529	src/executables/2_EfficientDArray/CMakeFiles/2_EfficientDArray.dir/main.cpp.obj	1537056a56ed01f1
+137	1456	7944246238856534	src/executables/2_EfficientDArray/CMakeFiles/2_EfficientDArray.dir/main.cpp.obj	1537056a56ed01f1
 1644	2247	7944047559612454	src/libraries/static/PolynomialMapLib.lib	7e4aa5ed58259fe1
 23	751	7944051776714301	src/executables/1_BasicDArray/CMakeFiles/1_BasicDArray.dir/main.cpp.obj	ba90046184c3fa3e
-165	797	7944047544806854	src/executables/2_EfficientDArray/CMakeFiles/2_EfficientDArray.dir/DArray.cpp.obj	f2b34e67f983650d
+38	1467	7944246237863425	src/executables/2_EfficientDArray/CMakeFiles/2_EfficientDArray.dir/DArray.cpp.obj	f2b34e67f983650d
 31	1228	7944047543477493	src/libraries/shared/CMakeFiles/PolynomialListLib.dir/PolynomialList.cpp.obj	cdf1ac1775c4b89b
 22	758	7944048201843776	src/executables/1_BasicDArray/CMakeFiles/1_BasicDArray.dir/DArray.cpp.obj	12233c45658d65ab
 197	1543	7944047545131167	src/executables/4_list_Polynomial/CMakeFiles/4_list_Polynomial.dir/main.cpp.obj	4b384357adc08d5
@@ -10,8 +10,26 @@
 212	1734	7944047545293045	src/executables/5_map_Polynomial/CMakeFiles/5_map_Polynomial.dir/test.cpp.obj	b0af772e736cf8c7
 1228	2233	7944047564697847	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/PolynomialListLib.dll	b7beee828641382c
 1228	2233	7944047564697847	src/libraries/shared/PolynomialListLib.lib	b7beee828641382c
-798	2247	7944047551153907	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/2_EfficientDArray.exe	f4e686acd8bfda05
+1468	2340	7944246252165393	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/2_EfficientDArray.exe	f4e686acd8bfda05
 753	1140	7944051784011979	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/1_BasicDArray.exe	c5e6ac812c8f9d77
 2234	3484	7944047565520092	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/4_list_Polynomial.exe	a3646cbb959f7137
 2248	3537	7944047565650004	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/5_map_Polynomial.exe	91c3dc1276f7035e
 21	83	7944048200787753	clean	44e920a614519ae1
+19	79	7944376276102427	clean	44e920a614519ae1
+27	817	7944376277208431	src/executables/3_TemplateDArray/CMakeFiles/3_TemplateDArray.dir/main.cpp.obj	213929928b77e1ae
+821	1684	7944376285137927	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/3_TemplateDArray.exe	8c2ce5e2390ab00
+32	736	7944377848263368	src/libraries/shared/CMakeFiles/PolynomialListLib.dir/PolynomialList.cpp.obj	cdf1ac1775c4b89b
+96	973	7944377848911692	src/executables/2_EfficientDArray/CMakeFiles/2_EfficientDArray.dir/DArray.cpp.obj	f2b34e67f983650d
+66	982	7944377848609310	src/executables/1_BasicDArray/CMakeFiles/1_BasicDArray.dir/DArray.cpp.obj	12233c45658d65ab
+82	989	7944377848764698	src/executables/1_BasicDArray/CMakeFiles/1_BasicDArray.dir/main.cpp.obj	ba90046184c3fa3e
+112	1027	7944377849073433	src/executables/2_EfficientDArray/CMakeFiles/2_EfficientDArray.dir/main.cpp.obj	1537056a56ed01f1
+129	1110	7944377849244353	src/executables/4_list_Polynomial/CMakeFiles/4_list_Polynomial.dir/main.cpp.obj	4b384357adc08d5
+51	1167	7944377848454479	src/libraries/static/CMakeFiles/PolynomialMapLib.dir/PolynomialMap.cpp.obj	40a22e1e98f7e6c9
+147	1199	7944377849427753	src/executables/5_map_Polynomial/CMakeFiles/5_map_Polynomial.dir/test.cpp.obj	b0af772e736cf8c7
+739	1289	7944377859711766	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/PolynomialListLib.dll	b7beee828641382c
+739	1289	7944377859711766	src/libraries/shared/PolynomialListLib.lib	b7beee828641382c
+1167	1402	7944377859612837	src/libraries/static/PolynomialMapLib.lib	7e4aa5ed58259fe1
+990	1616	7944377857853227	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/1_BasicDArray.exe	c5e6ac812c8f9d77
+1027	1647	7944377858221933	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/2_EfficientDArray.exe	f4e686acd8bfda05
+1290	1823	7944377860852378	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/4_list_Polynomial.exe	a3646cbb959f7137
+1402	1955	7944377861965449	C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/bin/5_map_Polynomial.exe	91c3dc1276f7035e

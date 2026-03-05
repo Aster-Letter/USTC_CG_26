@@ -44,6 +44,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/3_TemplateDArray/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("C:/Users/legion/OneDrive/桌面/Homework/Files/CS/Computer Graphics/Repository/USTC_CG_26/Homeworks/0_cpp_warmup/project/out/build/x64-Debug/src/executables/4_list_Polynomial/cmake_install.cmake")
 endif()
 
