@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 
 #include "imgui.h"
 #include "shapes/ellipse.h"
@@ -12,6 +11,8 @@
 #include "shapes/rect.h"
 
 namespace USTC_CG
+{
+namespace
 {
 constexpr float kDragStartThresholdSquared = 9.0f;
 constexpr float kRadiansToDegrees = 57.29577951308232f;
