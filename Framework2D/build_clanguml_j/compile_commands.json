@@ -1,0 +1,332 @@
+[
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -IC:/cg_fw2d/third_party/glad/include -g -o third_party\\CMakeFiles\\glad.dir\\glad\\src\\glad.c.obj -c C:\\cg_fw2d\\third_party\\glad\\src\\glad.c",
+  "file": "C:/cg_fw2d/third_party/glad/src/glad.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/glad.dir/glad/src/glad.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DUSE_STD_FILESYSTEM -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -IC:/cg_fw2d/third_party/glfw/include -g -std=gnu++20 -o third_party\\CMakeFiles\\imgui.dir\\ImGuiFileDialog\\ImGuiFileDialog.cpp.obj -c C:\\cg_fw2d\\third_party\\ImGuiFileDialog\\ImGuiFileDialog.cpp",
+  "file": "C:/cg_fw2d/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/imgui.dir/ImGuiFileDialog/ImGuiFileDialog.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DUSE_STD_FILESYSTEM -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -IC:/cg_fw2d/third_party/glfw/include -g -std=gnu++20 -o third_party\\CMakeFiles\\imgui.dir\\imgui\\backends\\imgui_impl_glfw.cpp.obj -c C:\\cg_fw2d\\third_party\\imgui\\backends\\imgui_impl_glfw.cpp",
+  "file": "C:/cg_fw2d/third_party/imgui/backends/imgui_impl_glfw.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/imgui.dir/imgui/backends/imgui_impl_glfw.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DUSE_STD_FILESYSTEM -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -IC:/cg_fw2d/third_party/glfw/include -g -std=gnu++20 -o third_party\\CMakeFiles\\imgui.dir\\imgui\\backends\\imgui_impl_opengl3.cpp.obj -c C:\\cg_fw2d\\third_party\\imgui\\backends\\imgui_impl_opengl3.cpp",
+  "file": "C:/cg_fw2d/third_party/imgui/backends/imgui_impl_opengl3.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/imgui.dir/imgui/backends/imgui_impl_opengl3.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DUSE_STD_FILESYSTEM -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -IC:/cg_fw2d/third_party/glfw/include -g -std=gnu++20 -o third_party\\CMakeFiles\\imgui.dir\\imgui\\imgui.cpp.obj -c C:\\cg_fw2d\\third_party\\imgui\\imgui.cpp",
+  "file": "C:/cg_fw2d/third_party/imgui/imgui.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/imgui.dir/imgui/imgui.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DUSE_STD_FILESYSTEM -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -IC:/cg_fw2d/third_party/glfw/include -g -std=gnu++20 -o third_party\\CMakeFiles\\imgui.dir\\imgui\\imgui_demo.cpp.obj -c C:\\cg_fw2d\\third_party\\imgui\\imgui_demo.cpp",
+  "file": "C:/cg_fw2d/third_party/imgui/imgui_demo.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/imgui.dir/imgui/imgui_demo.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DUSE_STD_FILESYSTEM -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -IC:/cg_fw2d/third_party/glfw/include -g -std=gnu++20 -o third_party\\CMakeFiles\\imgui.dir\\imgui\\imgui_draw.cpp.obj -c C:\\cg_fw2d\\third_party\\imgui\\imgui_draw.cpp",
+  "file": "C:/cg_fw2d/third_party/imgui/imgui_draw.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/imgui.dir/imgui/imgui_draw.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DUSE_STD_FILESYSTEM -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -IC:/cg_fw2d/third_party/glfw/include -g -std=gnu++20 -o third_party\\CMakeFiles\\imgui.dir\\imgui\\imgui_tables.cpp.obj -c C:\\cg_fw2d\\third_party\\imgui\\imgui_tables.cpp",
+  "file": "C:/cg_fw2d/third_party/imgui/imgui_tables.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/imgui.dir/imgui/imgui_tables.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DUSE_STD_FILESYSTEM -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -IC:/cg_fw2d/third_party/glfw/include -g -std=gnu++20 -o third_party\\CMakeFiles\\imgui.dir\\imgui\\imgui_widgets.cpp.obj -c C:\\cg_fw2d\\third_party\\imgui\\imgui_widgets.cpp",
+  "file": "C:/cg_fw2d/third_party/imgui/imgui_widgets.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/CMakeFiles/imgui.dir/imgui/imgui_widgets.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\context.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\context.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/context.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/context.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\init.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\init.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/init.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/init.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\input.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\input.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/input.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/input.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\monitor.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\monitor.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/monitor.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/monitor.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\platform.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\platform.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/platform.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/platform.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\vulkan.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\vulkan.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/vulkan.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/vulkan.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\window.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\window.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/window.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/window.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\egl_context.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\egl_context.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/egl_context.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/egl_context.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\osmesa_context.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\osmesa_context.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/osmesa_context.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/osmesa_context.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\null_init.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\null_init.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/null_init.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/null_init.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\null_monitor.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\null_monitor.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/null_monitor.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/null_monitor.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\null_window.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\null_window.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/null_window.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/null_window.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\null_joystick.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\null_joystick.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/null_joystick.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/null_joystick.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\win32_module.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\win32_module.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/win32_module.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/win32_module.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\win32_time.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\win32_time.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/win32_time.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/win32_time.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\win32_thread.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\win32_thread.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/win32_thread.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/win32_thread.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\win32_init.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\win32_init.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/win32_init.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/win32_init.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\win32_joystick.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\win32_joystick.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/win32_joystick.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/win32_joystick.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\win32_monitor.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\win32_monitor.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/win32_monitor.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/win32_monitor.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\win32_window.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\win32_window.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/win32_window.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/win32_window.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\gcc.exe -DUNICODE -D_GLFW_WIN32 -D_UNICODE -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glfw/src -IC:/cg_fw2d/build_clanguml_j/third_party/glfw/src -g -std=c99 -Wall -o third_party\\glfw\\src\\CMakeFiles\\glfw.dir\\wgl_context.c.obj -c C:\\cg_fw2d\\third_party\\glfw\\src\\wgl_context.c",
+  "file": "C:/cg_fw2d/third_party/glfw/src/wgl_context.c",
+  "output": "C:/cg_fw2d/build_clanguml_j/third_party/glfw/src/CMakeFiles/glfw.dir/wgl_context.c.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\common\\CMakeFiles\\common.dir\\image_widget.cpp.obj -c C:\\cg_fw2d\\src\\common\\image_widget.cpp",
+  "file": "C:/cg_fw2d/src/common/image_widget.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/common/CMakeFiles/common.dir/image_widget.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\common\\CMakeFiles\\common.dir\\window.cpp.obj -c C:\\cg_fw2d\\src\\common\\window.cpp",
+  "file": "C:/cg_fw2d/src/common/window.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/common/CMakeFiles/common.dir/window.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\demo\\CMakeFiles\\demo_hello_world.dir\\demo_hello_world.cpp.obj -c C:\\cg_fw2d\\src\\demo\\demo_hello_world.cpp",
+  "file": "C:/cg_fw2d/src/demo/demo_hello_world.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/demo/CMakeFiles/demo_hello_world.dir/demo_hello_world.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\demo\\CMakeFiles\\demo.dir\\demo.cpp.obj -c C:\\cg_fw2d\\src\\demo\\demo.cpp",
+  "file": "C:/cg_fw2d/src/demo/demo.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/demo/CMakeFiles/demo.dir/demo.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\demo\\CMakeFiles\\demo.dir\\demo_window.cpp.obj -c C:\\cg_fw2d\\src\\demo\\demo_window.cpp",
+  "file": "C:/cg_fw2d/src/demo/demo_window.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/demo/CMakeFiles/demo.dir/demo_window.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/src/assignments/1_MiniDraw -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\1_MiniDraw\\CMakeFiles\\1_MiniDraw.dir\\canvas_widget.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\1_MiniDraw\\canvas_widget.cpp",
+  "file": "C:/cg_fw2d/src/assignments/1_MiniDraw/canvas_widget.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/1_MiniDraw/CMakeFiles/1_MiniDraw.dir/canvas_widget.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/src/assignments/1_MiniDraw -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\1_MiniDraw\\CMakeFiles\\1_MiniDraw.dir\\main.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\1_MiniDraw\\main.cpp",
+  "file": "C:/cg_fw2d/src/assignments/1_MiniDraw/main.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/1_MiniDraw/CMakeFiles/1_MiniDraw.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/src/assignments/1_MiniDraw -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\1_MiniDraw\\CMakeFiles\\1_MiniDraw.dir\\minidraw_window.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\1_MiniDraw\\minidraw_window.cpp",
+  "file": "C:/cg_fw2d/src/assignments/1_MiniDraw/minidraw_window.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/1_MiniDraw/CMakeFiles/1_MiniDraw.dir/minidraw_window.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/src/assignments/1_MiniDraw -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\1_MiniDraw\\CMakeFiles\\1_MiniDraw.dir\\shapes\\ellipse.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\1_MiniDraw\\shapes\\ellipse.cpp",
+  "file": "C:/cg_fw2d/src/assignments/1_MiniDraw/shapes/ellipse.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/1_MiniDraw/CMakeFiles/1_MiniDraw.dir/shapes/ellipse.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/src/assignments/1_MiniDraw -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\1_MiniDraw\\CMakeFiles\\1_MiniDraw.dir\\shapes\\freehand.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\1_MiniDraw\\shapes\\freehand.cpp",
+  "file": "C:/cg_fw2d/src/assignments/1_MiniDraw/shapes/freehand.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/1_MiniDraw/CMakeFiles/1_MiniDraw.dir/shapes/freehand.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/src/assignments/1_MiniDraw -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\1_MiniDraw\\CMakeFiles\\1_MiniDraw.dir\\shapes\\line.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\1_MiniDraw\\shapes\\line.cpp",
+  "file": "C:/cg_fw2d/src/assignments/1_MiniDraw/shapes/line.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/1_MiniDraw/CMakeFiles/1_MiniDraw.dir/shapes/line.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/src/assignments/1_MiniDraw -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\1_MiniDraw\\CMakeFiles\\1_MiniDraw.dir\\shapes\\polygon.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\1_MiniDraw\\shapes\\polygon.cpp",
+  "file": "C:/cg_fw2d/src/assignments/1_MiniDraw/shapes/polygon.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/1_MiniDraw/CMakeFiles/1_MiniDraw.dir/shapes/polygon.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -IC:/cg_fw2d/src/assignments/1_MiniDraw -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\1_MiniDraw\\CMakeFiles\\1_MiniDraw.dir\\shapes\\rect.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\1_MiniDraw\\shapes\\rect.cpp",
+  "file": "C:/cg_fw2d/src/assignments/1_MiniDraw/shapes/rect.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/1_MiniDraw/CMakeFiles/1_MiniDraw.dir/shapes/rect.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/2_image_warping/data\\\" -IC:/cg_fw2d/src/assignments/2_ImageWarping -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\2_ImageWarping\\CMakeFiles\\2_ImageWarping.dir\\main.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\2_ImageWarping\\main.cpp",
+  "file": "C:/cg_fw2d/src/assignments/2_ImageWarping/main.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/2_ImageWarping/CMakeFiles/2_ImageWarping.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/2_image_warping/data\\\" -IC:/cg_fw2d/src/assignments/2_ImageWarping -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\2_ImageWarping\\CMakeFiles\\2_ImageWarping.dir\\warper\\IDW_warper.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\2_ImageWarping\\warper\\IDW_warper.cpp",
+  "file": "C:/cg_fw2d/src/assignments/2_ImageWarping/warper/IDW_warper.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/2_ImageWarping/CMakeFiles/2_ImageWarping.dir/warper/IDW_warper.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/2_image_warping/data\\\" -IC:/cg_fw2d/src/assignments/2_ImageWarping -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\2_ImageWarping\\CMakeFiles\\2_ImageWarping.dir\\warper\\RBF_warper.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\2_ImageWarping\\warper\\RBF_warper.cpp",
+  "file": "C:/cg_fw2d/src/assignments/2_ImageWarping/warper/RBF_warper.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/2_ImageWarping/CMakeFiles/2_ImageWarping.dir/warper/RBF_warper.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/2_image_warping/data\\\" -IC:/cg_fw2d/src/assignments/2_ImageWarping -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\2_ImageWarping\\CMakeFiles\\2_ImageWarping.dir\\warper\\warper.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\2_ImageWarping\\warper\\warper.cpp",
+  "file": "C:/cg_fw2d/src/assignments/2_ImageWarping/warper/warper.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/2_ImageWarping/CMakeFiles/2_ImageWarping.dir/warper/warper.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/2_image_warping/data\\\" -IC:/cg_fw2d/src/assignments/2_ImageWarping -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\2_ImageWarping\\CMakeFiles\\2_ImageWarping.dir\\warping_widget.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\2_ImageWarping\\warping_widget.cpp",
+  "file": "C:/cg_fw2d/src/assignments/2_ImageWarping/warping_widget.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/2_ImageWarping/CMakeFiles/2_ImageWarping.dir/warping_widget.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/2_image_warping/data\\\" -IC:/cg_fw2d/src/assignments/2_ImageWarping -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\2_ImageWarping\\CMakeFiles\\2_ImageWarping.dir\\warping_window.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\2_ImageWarping\\warping_window.cpp",
+  "file": "C:/cg_fw2d/src/assignments/2_ImageWarping/warping_window.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/2_ImageWarping/CMakeFiles/2_ImageWarping.dir/warping_window.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/3_poisson_image_editing/data\\\" -IC:/cg_fw2d/src/assignments/3_PoissonImageEditing -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\3_PoissonImageEditing\\CMakeFiles\\3_PoissonImageEditing.dir\\main.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\3_PoissonImageEditing\\main.cpp",
+  "file": "C:/cg_fw2d/src/assignments/3_PoissonImageEditing/main.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/3_PoissonImageEditing/CMakeFiles/3_PoissonImageEditing.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/3_poisson_image_editing/data\\\" -IC:/cg_fw2d/src/assignments/3_PoissonImageEditing -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\3_PoissonImageEditing\\CMakeFiles\\3_PoissonImageEditing.dir\\poisson_window.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\3_PoissonImageEditing\\poisson_window.cpp",
+  "file": "C:/cg_fw2d/src/assignments/3_PoissonImageEditing/poisson_window.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/3_PoissonImageEditing/CMakeFiles/3_PoissonImageEditing.dir/poisson_window.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/3_poisson_image_editing/data\\\" -IC:/cg_fw2d/src/assignments/3_PoissonImageEditing -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\3_PoissonImageEditing\\CMakeFiles\\3_PoissonImageEditing.dir\\shapes\\line.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\3_PoissonImageEditing\\shapes\\line.cpp",
+  "file": "C:/cg_fw2d/src/assignments/3_PoissonImageEditing/shapes/line.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/3_PoissonImageEditing/CMakeFiles/3_PoissonImageEditing.dir/shapes/line.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/3_poisson_image_editing/data\\\" -IC:/cg_fw2d/src/assignments/3_PoissonImageEditing -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\3_PoissonImageEditing\\CMakeFiles\\3_PoissonImageEditing.dir\\shapes\\rect.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\3_PoissonImageEditing\\shapes\\rect.cpp",
+  "file": "C:/cg_fw2d/src/assignments/3_PoissonImageEditing/shapes/rect.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/3_PoissonImageEditing/CMakeFiles/3_PoissonImageEditing.dir/shapes/rect.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/3_poisson_image_editing/data\\\" -IC:/cg_fw2d/src/assignments/3_PoissonImageEditing -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\3_PoissonImageEditing\\CMakeFiles\\3_PoissonImageEditing.dir\\source_image_widget.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\3_PoissonImageEditing\\source_image_widget.cpp",
+  "file": "C:/cg_fw2d/src/assignments/3_PoissonImageEditing/source_image_widget.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/3_PoissonImageEditing/CMakeFiles/3_PoissonImageEditing.dir/source_image_widget.cpp.obj"
+},
+{
+  "directory": "C:/cg_fw2d/build_clanguml_j",
+  "command": "D:\\Program\\Perl\\c\\bin\\c++.exe -DDATA_PATH=\\\"C:/cg_fw2d/../Homeworks/3_poisson_image_editing/data\\\" -IC:/cg_fw2d/src/assignments/3_PoissonImageEditing -IC:/cg_fw2d/include -IC:/cg_fw2d/third_party -IC:/cg_fw2d/third_party/glfw/include -IC:/cg_fw2d/third_party/glad/include -IC:/cg_fw2d/third_party/imgui -IC:/cg_fw2d/third_party/imgui/backends -IC:/cg_fw2d/third_party/ImGuiFileDialog -g -std=gnu++20 -Wall -Wextra -Wpedantic -o src\\assignments\\3_PoissonImageEditing\\CMakeFiles\\3_PoissonImageEditing.dir\\target_image_widget.cpp.obj -c C:\\cg_fw2d\\src\\assignments\\3_PoissonImageEditing\\target_image_widget.cpp",
+  "file": "C:/cg_fw2d/src/assignments/3_PoissonImageEditing/target_image_widget.cpp",
+  "output": "C:/cg_fw2d/build_clanguml_j/src/assignments/3_PoissonImageEditing/CMakeFiles/3_PoissonImageEditing.dir/target_image_widget.cpp.obj"
+}
+]

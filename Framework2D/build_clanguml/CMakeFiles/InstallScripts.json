@@ -1,0 +1,18 @@
+{
+	"InstallScripts" : 
+	[
+		"X:/build_clanguml/cmake_install.cmake",
+		"X:/build_clanguml/third_party/cmake_install.cmake",
+		"X:/build_clanguml/third_party/glfw/cmake_install.cmake",
+		"X:/build_clanguml/third_party/glfw/src/cmake_install.cmake",
+		"X:/build_clanguml/third_party/glfw/docs/cmake_install.cmake",
+		"X:/build_clanguml/src/cmake_install.cmake",
+		"X:/build_clanguml/src/common/cmake_install.cmake",
+		"X:/build_clanguml/src/demo/cmake_install.cmake",
+		"X:/build_clanguml/src/assignments/cmake_install.cmake",
+		"X:/build_clanguml/src/assignments/1_MiniDraw/cmake_install.cmake",
+		"X:/build_clanguml/src/assignments/2_ImageWarping/cmake_install.cmake",
+		"X:/build_clanguml/src/assignments/3_PoissonImageEditing/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

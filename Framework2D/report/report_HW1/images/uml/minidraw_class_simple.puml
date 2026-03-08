@@ -1,0 +1,81 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam ArrowColor #444444
+skinparam ClassBorderColor #333333
+skinparam ClassBackgroundColor #FCFCFC
+skinparam ClassHeaderBackgroundColor #EFEFEF
+skinparam NoteBackgroundColor #FFF8DC
+skinparam NoteBorderColor #C8B560
+hide empty members
+
+package "Framework" {
+  abstract class Window
+  abstract class Widget
+}
+
+package "MiniDraw Assignment" {
+  class MiniDraw {
+    - p_canvas_: shared_ptr<Canvas>
+  }
+
+  class Canvas {
+    - shape_list_: vector<shared_ptr<Shape>>
+    - undo_history_
+    - redo_history_
+    - selected_shape_index_
+    - pending_config_: Shape::Config
+  }
+
+  abstract class Shape {
+    {abstract} draw(config)
+    {abstract} hit_test(x, y, tolerance)
+    {abstract} translate(dx, dy)
+    {abstract} rotate(radians, anchor)
+    {abstract} scale(sx, sy, anchor)
+    {abstract} clone()
+  }
+
+  class "Shape::Config" as ShapeConfig {
+    line_color
+    line_thickness
+    is_filled
+    fill_color
+  }
+
+  class Line
+  class Rect
+  class Ellipse
+  class Polygon
+  class Freehand
+}
+
+Window <|-- MiniDraw
+Widget <|-- Canvas
+MiniDraw o-- Canvas : owns
+Canvas o-- "0..*" Shape : manages
+Shape *-- ShapeConfig : style
+Shape <|-- Line
+Shape <|-- Rect
+Shape <|-- Ellipse
+Shape <|-- Polygon
+Shape <|-- Freehand
+
+note right of Canvas
+  Responsibilities:
+  - shape list management
+  - mouse interaction state
+  - selection/edit transaction
+  - undo/redo
+end note
+
+note bottom of Shape
+  Common shape abstraction.
+  Concrete shapes are used
+  through polymorphism.
+end note
+
+@enduml
