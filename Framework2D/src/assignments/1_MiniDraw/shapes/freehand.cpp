@@ -2,39 +2,63 @@
 
 #include <algorithm>
 #include <cmath>
+
 #include <imgui.h>
 
 namespace USTC_CG
 {
 namespace
 {
-float point_to_segment_distance(
-    float px,
-    float py,
-    float ax,
-    float ay,
-    float bx,
-    float by)
+ImVec2 rotate_point(const ImVec2& point, const ImVec2& anchor, float radians)
 {
-    const float abx = bx - ax;
-    const float aby = by - ay;
-    const float ab_len_sq = abx * abx + aby * aby;
-    if (ab_len_sq <= 1e-6f)
+    const float sine = std::sin(radians);
+    const float cosine = std::cos(radians);
+    const float dx = point.x - anchor.x;
+    const float dy = point.y - anchor.y;
+    return ImVec2(
+        anchor.x + dx * cosine - dy * sine,
+        anchor.y + dx * sine + dy * cosine);
+}
+
+ImVec2 scale_point(
+    const ImVec2& point,
+    const ImVec2& anchor,
+    float scale_x,
+    float scale_y)
+{
+    return ImVec2(
+        anchor.x + (point.x - anchor.x) * scale_x,
+        anchor.y + (point.y - anchor.y) * scale_y);
+}
+
+float point_to_segment_distance(
+    const ImVec2& point,
+    const ImVec2& segment_start,
+    const ImVec2& segment_end)
+{
+    const float dx = segment_end.x - segment_start.x;
+    const float dy = segment_end.y - segment_start.y;
+    const float length_squared = dx * dx + dy * dy;
+    if (length_squared <= 1e-6f)
     {
-        const float dx = px - ax;
-        const float dy = py - ay;
-        return std::sqrt(dx * dx + dy * dy);
+        const float px = point.x - segment_start.x;
+        const float py = point.y - segment_start.y;
+        return std::sqrt(px * px + py * py);
     }
 
     const float t = std::clamp(
-        ((px - ax) * abx + (py - ay) * aby) / ab_len_sq, 0.0f, 1.0f);
-    const float cx = ax + t * abx;
-    const float cy = ay + t * aby;
-    const float dx = px - cx;
-    const float dy = py - cy;
-    return std::sqrt(dx * dx + dy * dy);
+        ((point.x - segment_start.x) * dx +
+         (point.y - segment_start.y) * dy) /
+            length_squared,
+        0.0f,
+        1.0f);
+    const float projection_x = segment_start.x + t * dx;
+    const float projection_y = segment_start.y + t * dy;
+    const float distance_x = point.x - projection_x;
+    const float distance_y = point.y - projection_y;
+    return std::sqrt(distance_x * distance_x + distance_y * distance_y);
 }
-}
+}  // namespace
 
 Freehand::Freehand(float x, float y, const Config& config) : Shape(config)
 {
@@ -44,7 +68,9 @@ Freehand::Freehand(float x, float y, const Config& config) : Shape(config)
 void Freehand::draw(const Config& config) const
 {
     if (points_.size() < 2)
+    {
         return;
+    }
 
     const auto& style = shape_config();
     std::vector<ImVec2> screen_points;
@@ -60,39 +86,13 @@ void Freehand::draw(const Config& config) const
         screen_points.data(),
         static_cast<int>(screen_points.size()),
         to_imcolor(style.line_color),
-        false,  // Not closed
+        false,
         style.line_thickness);
 }
 
 void Freehand::update(float x, float y)
 {
     add_control_point(x, y);
-}
-
-bool Freehand::hit_test(float x, float y, float tolerance) const
-{
-    if (points_.size() < 2)
-    {
-        return false;
-    }
-
-    const auto& style = shape_config();
-    const float expanded_tolerance = tolerance + style.line_thickness * 0.5f;
-    for (size_t i = 1; i < points_.size(); ++i)
-    {
-        if (point_to_segment_distance(
-                x,
-                y,
-                points_[i - 1].x,
-                points_[i - 1].y,
-                points_[i].x,
-                points_[i].y) <= expanded_tolerance)
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 void Freehand::add_control_point(float x, float y)
@@ -112,4 +112,110 @@ void Freehand::add_control_point(float x, float y)
         points_.push_back(ImVec2(x, y));
     }
 }
+
+std::shared_ptr<Shape> Freehand::clone() const
+{
+    return std::make_shared<Freehand>(*this);
 }
+
+bool Freehand::hit_test(float x, float y, float tolerance) const
+{
+    if (points_.size() < 2)
+    {
+        return false;
+    }
+
+    const ImVec2 point(x, y);
+    for (size_t i = 1; i < points_.size(); ++i)
+    {
+        if (point_to_segment_distance(point, points_[i - 1], points_[i]) <=
+            tolerance + config().line_thickness * 0.5f)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Freehand::translate(float dx, float dy)
+{
+    for (auto& point : points_)
+    {
+        point.x += dx;
+        point.y += dy;
+    }
+}
+
+void Freehand::scale(float scale_x, float scale_y, const ImVec2& anchor)
+{
+    for (auto& point : points_)
+    {
+        point = scale_point(point, anchor, scale_x, scale_y);
+    }
+}
+
+void Freehand::rotate(float radians, const ImVec2& anchor)
+{
+    for (auto& point : points_)
+    {
+        point = rotate_point(point, anchor, radians);
+    }
+    rotation_radians_ += radians;
+}
+
+ImVec2 Freehand::center() const
+{
+    const ImVec2 min_point = bounds_min();
+    const ImVec2 max_point = bounds_max();
+    return ImVec2(
+        (min_point.x + max_point.x) * 0.5f,
+        (min_point.y + max_point.y) * 0.5f);
+}
+
+ImVec2 Freehand::bounds_min() const
+{
+    if (points_.empty())
+    {
+        return ImVec2(0.0f, 0.0f);
+    }
+
+    ImVec2 result = points_.front();
+    for (const auto& point : points_)
+    {
+        result.x = std::min(result.x, point.x);
+        result.y = std::min(result.y, point.y);
+    }
+    return result;
+}
+
+ImVec2 Freehand::bounds_max() const
+{
+    if (points_.empty())
+    {
+        return ImVec2(0.0f, 0.0f);
+    }
+
+    ImVec2 result = points_.front();
+    for (const auto& point : points_)
+    {
+        result.x = std::max(result.x, point.x);
+        result.y = std::max(result.y, point.y);
+    }
+    return result;
+}
+
+float Freehand::rotation_radians() const
+{
+    return rotation_radians_;
+}
+
+void Freehand::set_rotation_radians(float radians)
+{
+    rotate(radians - rotation_radians_, center());
+}
+
+const char* Freehand::type_name() const
+{
+    return "Freehand";
+}
+}  // namespace USTC_CG

@@ -2,6 +2,8 @@
 
 #include <imgui.h>
 
+#include <memory>
+
 namespace USTC_CG
 {
 class Shape
@@ -45,7 +47,17 @@ class Shape
      * @param x, y Dragging point. e.g. end point of a line.
      */
     virtual void update(float x, float y) = 0;
+    virtual std::shared_ptr<Shape> clone() const = 0;
     virtual bool hit_test(float x, float y, float tolerance) const = 0;
+    virtual void translate(float dx, float dy) = 0;
+    virtual void scale(float scale_x, float scale_y, const ImVec2& anchor) = 0;
+    virtual void rotate(float radians, const ImVec2& anchor) = 0;
+    virtual ImVec2 center() const = 0;
+    virtual ImVec2 bounds_min() const = 0;
+    virtual ImVec2 bounds_max() const = 0;
+    virtual float rotation_radians() const = 0;
+    virtual void set_rotation_radians(float radians) = 0;
+    virtual const char* type_name() const = 0;
     /**
      * Adds a control point to the shape.
      * This function is used to add control points to the shape, which can be
@@ -57,6 +69,21 @@ class Shape
     {
         static_cast<void>(x);
         static_cast<void>(y);
+    }
+
+    virtual bool supports_fill() const
+    {
+        return false;
+    }
+
+    Config& mutable_shape_config()
+    {
+        return config_;
+    }
+
+    const Config& config() const
+    {
+        return config_;
     }
 
    protected:

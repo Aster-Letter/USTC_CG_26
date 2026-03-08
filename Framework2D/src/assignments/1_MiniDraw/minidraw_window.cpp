@@ -1,34 +1,74 @@
 #include "minidraw_window.h"
 
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#define STBIW_WINDOWS_UTF8
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
-#include <ImGuiFileDialog.h>
-
-#include <algorithm>
-#include <cmath>
-#include <vector>
-
 namespace
 {
 constexpr float kToolbarWidth = 180.0f;
 constexpr float kPropertiesWidth = 300.0f;
-constexpr char kExportDirDialogKey[] = "MiniDrawExportDirectory";
 
-std::string path_to_utf8(const std::filesystem::path& path)
+void draw_config_editor(
+    USTC_CG::Canvas* canvas,
+    USTC_CG::Shape::Config& config,
+    bool supports_fill,
+    bool apply_to_selection)
 {
-    const auto utf8_path = path.u8string();
-    return std::string(utf8_path.begin(), utf8_path.end());
-}
+    const bool line_color_changed =
+        ImGui::ColorEdit4("Line Color", config.line_color);
+    if (apply_to_selection && ImGui::IsItemActivated())
+    {
+        canvas->begin_selected_shape_edit();
+    }
+    if (apply_to_selection && line_color_changed)
+    {
+        canvas->set_selected_shape_config(config);
+    }
+    if (apply_to_selection && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        canvas->end_selected_shape_edit();
+    }
 
-std::filesystem::path utf8_to_path(const std::string& utf8_path)
-{
-    const auto* begin = reinterpret_cast<const char8_t*>(utf8_path.data());
-    return std::filesystem::path(std::u8string(begin, begin + utf8_path.size()));
+    const bool thickness_changed =
+        ImGui::SliderFloat("Line Width", &config.line_thickness, 1.0f, 12.0f);
+    if (apply_to_selection && ImGui::IsItemActivated())
+    {
+        canvas->begin_selected_shape_edit();
+    }
+    if (apply_to_selection && thickness_changed)
+    {
+        canvas->set_selected_shape_config(config);
+    }
+    if (apply_to_selection && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        canvas->end_selected_shape_edit();
+    }
+
+    if (!supports_fill)
+    {
+        return;
+    }
+
+    const bool fill_changed = ImGui::Checkbox("Fill Shape", &config.is_filled);
+    if (apply_to_selection && fill_changed)
+    {
+        canvas->set_selected_shape_config(config);
+    }
+
+    if (config.is_filled)
+    {
+        const bool fill_color_changed =
+            ImGui::ColorEdit4("Fill Color", config.fill_color);
+        if (apply_to_selection && ImGui::IsItemActivated())
+        {
+            canvas->begin_selected_shape_edit();
+        }
+        if (apply_to_selection && fill_color_changed)
+        {
+            canvas->set_selected_shape_config(config);
+        }
+        if (apply_to_selection && ImGui::IsItemDeactivatedAfterEdit())
+        {
+            canvas->end_selected_shape_edit();
+        }
+    }
 }
 }
 
@@ -45,8 +85,6 @@ MiniDraw::~MiniDraw()
 
 void MiniDraw::draw()
 {
-    const bool capture_this_frame = export_prepare_frame_;
-
     handle_shortcuts();
     draw_main_menu();
 
@@ -57,125 +95,7 @@ void MiniDraw::draw()
         draw_canvas();
     }
 
-    if (!capture_this_frame)
-    {
-        draw_settings_window();
-        process_export_directory_dialog();
-    }
-
-    if (capture_this_frame)
-    {
-        pending_export_canvas_ = true;
-        export_prepare_frame_ = false;
-    }
-}
-
-void MiniDraw::post_render()
-{
-    if (!pending_export_canvas_)
-    {
-        return;
-    }
-
-    pending_export_canvas_ = false;
-
-    std::filesystem::path file_path = export_directory_;
-    std::string file_name = export_file_name_.data();
-    if (file_name.empty())
-    {
-        file_name = "minidraw_export.png";
-    }
-    if (std::filesystem::path(file_name).extension().empty())
-    {
-        file_name += ".png";
-    }
-
-    file_path /= file_name;
-    if (export_canvas_to_png(file_path))
-    {
-        export_status_message_ = "Exported canvas to: " + path_to_utf8(file_path);
-    }
-    else if (export_status_message_.empty())
-    {
-        export_status_message_ = "Failed to export canvas.";
-    }
-}
-
-void MiniDraw::request_export_canvas()
-{
-    export_prepare_frame_ = true;
-    export_status_message_.clear();
-}
-
-void MiniDraw::process_export_directory_dialog()
-{
-    if (ImGuiFileDialog::Instance()->Display(kExportDirDialogKey))
-    {
-        if (ImGuiFileDialog::Instance()->IsOk())
-        {
-            export_directory_ = utf8_to_path(
-                ImGuiFileDialog::Instance()->GetCurrentPath());
-            export_status_message_ = "Export folder updated.";
-        }
-
-        ImGuiFileDialog::Instance()->Close();
-    }
-}
-
-bool MiniDraw::export_canvas_to_png(const std::filesystem::path& file_path)
-{
-    if (canvas_capture_size_.x <= 1.0f || canvas_capture_size_.y <= 1.0f)
-    {
-        export_status_message_ = "Canvas region is empty, nothing to export.";
-        return false;
-    }
-
-    std::error_code ec;
-    std::filesystem::create_directories(file_path.parent_path(), ec);
-    if (ec)
-    {
-        export_status_message_ = "Failed to create export folder.";
-        return false;
-    }
-
-    ImGuiIO& io = ImGui::GetIO();
-    const float scale_x = io.DisplayFramebufferScale.x <= 0.0f ? 1.0f : io.DisplayFramebufferScale.x;
-    const float scale_y = io.DisplayFramebufferScale.y <= 0.0f ? 1.0f : io.DisplayFramebufferScale.y;
-
-    const int capture_x = std::max(0, static_cast<int>(std::lround(canvas_capture_min_.x * scale_x)));
-    const int capture_width = std::max(1, static_cast<int>(std::lround(canvas_capture_size_.x * scale_x)));
-    const int capture_height = std::max(1, static_cast<int>(std::lround(canvas_capture_size_.y * scale_y)));
-    const int capture_y = std::max(
-        0,
-        height_ - static_cast<int>(std::lround((canvas_capture_min_.y + canvas_capture_size_.y) * scale_y)));
-
-    std::vector<unsigned char> pixels(static_cast<size_t>(capture_width) * capture_height * 4U);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadBuffer(GL_BACK);
-    glReadPixels(
-        capture_x,
-        capture_y,
-        capture_width,
-        capture_height,
-        GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        pixels.data());
-
-    stbi_flip_vertically_on_write(1);
-    const int result = stbi_write_png(
-        path_to_utf8(file_path).c_str(),
-        capture_width,
-        capture_height,
-        4,
-        pixels.data(),
-        capture_width * 4);
-    stbi_flip_vertically_on_write(0);
-
-    if (result == 0)
-    {
-        export_status_message_ = "PNG writer failed.";
-    }
-    return result != 0;
+    draw_settings_window();
 }
 
 void MiniDraw::handle_shortcuts()
@@ -183,6 +103,12 @@ void MiniDraw::handle_shortcuts()
     ImGuiIO& io = ImGui::GetIO();
     if (io.WantTextInput)
     {
+        return;
+    }
+
+    if (ImGui::IsKeyPressed(ImGuiKey_Delete, false))
+    {
+        p_canvas_->delete_selected_shape();
         return;
     }
 
@@ -210,11 +136,6 @@ void MiniDraw::handle_shortcuts()
         p_canvas_->redo();
         return;
     }
-
-    if (ImGui::IsKeyPressed(ImGuiKey_E, false) && flag_show_canvas_view_)
-    {
-        request_export_canvas();
-    }
 }
 
 void MiniDraw::draw_main_menu()
@@ -236,21 +157,22 @@ void MiniDraw::draw_main_menu()
             p_canvas_->redo();
         }
 
+        if (
+            ImGui::MenuItem(
+                "Delete Selected",
+                "Del",
+                false,
+                p_canvas_->has_selected_shape()))
+        {
+            p_canvas_->delete_selected_shape();
+        }
+
         ImGui::Separator();
         if (
             ImGui::MenuItem(
                 "Clear Canvas", nullptr, false, p_canvas_->has_shapes()))
         {
             p_canvas_->clear_shape_list();
-        }
-        ImGui::EndMenu();
-    }
-
-    if (ImGui::BeginMenu("File"))
-    {
-        if (ImGui::MenuItem("Export Canvas", "Ctrl+E", false, flag_show_canvas_view_))
-        {
-            request_export_canvas();
         }
         ImGui::EndMenu();
     }
@@ -293,19 +215,23 @@ void MiniDraw::draw_toolbar()
             const char* label;
             Canvas::ShapeType type;
         } tools[] = {
+            { "Select", Canvas::kDefault },
             { "Line", Canvas::kLine },
             { "Rect", Canvas::kRect },
             { "Ellipse", Canvas::kEllipse },
             { "Polygon", Canvas::kPolygon },
             { "Freehand", Canvas::kFreehand },
-            { "Eraser", Canvas::kEraser },
         };
 
         for (const auto& tool : tools)
         {
             if (ImGui::Selectable(tool.label, p_canvas_->shape_type() == tool.type))
             {
-                if (p_canvas_->shape_type() == tool.type)
+                if (tool.type == Canvas::kDefault)
+                {
+                    p_canvas_->set_default();
+                }
+                else if (p_canvas_->shape_type() == tool.type)
                 {
                     p_canvas_->set_default();
                 }
@@ -318,7 +244,6 @@ void MiniDraw::draw_toolbar()
                         case Canvas::kEllipse: p_canvas_->set_ellipse(); break;
                         case Canvas::kPolygon: p_canvas_->set_polygon(); break;
                         case Canvas::kFreehand: p_canvas_->set_freehand(); break;
-                        case Canvas::kEraser: p_canvas_->set_eraser(); break;
                         default: p_canvas_->set_default(); break;
                     }
                 }
@@ -326,17 +251,15 @@ void MiniDraw::draw_toolbar()
         }
 
         ImGui::Spacing();
-        ImGui::TextWrapped(
-            "Drag to draw Line, Rect, Ellipse and Freehand. Polygon uses left click to add vertices and right click to finish. Eraser removes the topmost shape under the cursor.");
-
-        if (p_canvas_->shape_type() == Canvas::kEraser)
+        if (p_canvas_->shape_type() == Canvas::kDefault)
         {
-            ImGui::Spacing();
-            float radius = p_canvas_->eraser_tolerance();
-            if (ImGui::SliderFloat("Eraser Radius", &radius, 4.0f, 48.0f, "%.1f px"))
-            {
-                p_canvas_->set_eraser_tolerance(radius);
-            }
+            ImGui::TextWrapped(
+                "Select mode: click a shape to select it, drag to move it, then edit its style or transform in the Properties panel.");
+        }
+        else
+        {
+            ImGui::TextWrapped(
+                "Drag to draw Line, Rect, Ellipse and Freehand. Polygon uses left click to add vertices and right click to finish.");
         }
     }
     ImGui::End();
@@ -361,16 +284,76 @@ void MiniDraw::draw_properties_panel()
 
     if (ImGui::Begin("Properties", nullptr, flags))
     {
-        auto& config = p_canvas_->mutable_pending_config();
-
-        ImGui::TextUnformatted("Next Shape Style");
-        ImGui::Separator();
-        ImGui::ColorEdit4("Line Color", config.line_color);
-        ImGui::SliderFloat("Line Width", &config.line_thickness, 1.0f, 12.0f);
-        ImGui::Checkbox("Fill Shape", &config.is_filled);
-        if (config.is_filled)
+        const Canvas::ShapeType active_tool = p_canvas_->shape_type();
+        if (active_tool == Canvas::kDefault)
         {
-            ImGui::ColorEdit4("Fill Color", config.fill_color);
+            ImGui::TextUnformatted("Selection");
+            ImGui::Separator();
+            if (p_canvas_->has_selected_shape())
+            {
+                Shape::Config config = p_canvas_->selected_shape_config();
+                ImGui::Text("Shape: %s", p_canvas_->selected_shape_type_name());
+                draw_config_editor(
+                    p_canvas_.get(),
+                    config,
+                    p_canvas_->selected_shape_supports_fill(),
+                    true);
+
+                float rotation_degrees =
+                    p_canvas_->selected_shape_rotation_degrees();
+                const bool rotation_changed = ImGui::SliderFloat(
+                    "Rotation", &rotation_degrees, -180.0f, 180.0f, "%.1f deg");
+                if (ImGui::IsItemActivated())
+                {
+                    p_canvas_->begin_selected_shape_edit();
+                }
+                if (rotation_changed)
+                {
+                    p_canvas_->set_selected_shape_rotation_degrees(
+                        rotation_degrees);
+                }
+                if (ImGui::IsItemDeactivatedAfterEdit())
+                {
+                    p_canvas_->end_selected_shape_edit();
+                }
+
+                ImGui::Spacing();
+                ImGui::TextUnformatted("Transform");
+                ImGui::Separator();
+                if (ImGui::Button("Scale -10%", ImVec2(-1.0f, 0.0f)))
+                {
+                    p_canvas_->scale_selected_shape(0.9f);
+                }
+                if (ImGui::Button("Scale +10%", ImVec2(-1.0f, 0.0f)))
+                {
+                    p_canvas_->scale_selected_shape(1.1f);
+                }
+                if (ImGui::Button("Delete Selected", ImVec2(-1.0f, 0.0f)))
+                {
+                    p_canvas_->delete_selected_shape();
+                }
+            }
+            else
+            {
+                ImGui::TextWrapped(
+                    "No shape is selected. Use the Select tool, then click a shape on the canvas.");
+            }
+        }
+        else
+        {
+            auto& config = p_canvas_->mutable_pending_config();
+            ImGui::TextUnformatted("Next Shape Style");
+            ImGui::Separator();
+            draw_config_editor(
+                p_canvas_.get(),
+                config,
+                p_canvas_->tool_supports_fill(active_tool),
+                false);
+
+            if (!p_canvas_->tool_supports_fill(active_tool))
+            {
+                config.is_filled = false;
+            }
         }
 
         ImGui::Spacing();
@@ -383,18 +366,6 @@ void MiniDraw::draw_properties_panel()
         if (ImGui::Button("Redo", ImVec2(-1.0f, 0.0f)))
         {
             p_canvas_->redo();
-        }
-
-        if (p_canvas_->shape_type() == Canvas::kEraser)
-        {
-            ImGui::Spacing();
-            ImGui::TextUnformatted("Eraser");
-            ImGui::Separator();
-            float radius = p_canvas_->eraser_tolerance();
-            if (ImGui::SliderFloat("Brush Radius", &radius, 4.0f, 48.0f, "%.1f px"))
-            {
-                p_canvas_->set_eraser_tolerance(radius);
-            }
         }
     }
     ImGui::End();
@@ -423,8 +394,6 @@ void MiniDraw::draw_canvas()
         ImGui::Separator();
         const auto& canvas_min = ImGui::GetCursorScreenPos();
         const auto& available_size = ImGui::GetContentRegionAvail();
-        canvas_capture_min_ = canvas_min;
-        canvas_capture_size_ = available_size;
         p_canvas_->set_attributes(canvas_min, available_size);
         p_canvas_->draw();
     }
@@ -461,32 +430,6 @@ void MiniDraw::draw_settings_window()
         if (ImGui::Checkbox("Enable Anti-Aliasing", &antialiasing))
         {
             p_canvas_->set_antialiasing(antialiasing);
-        }
-
-        ImGui::Separator();
-        ImGui::TextUnformatted("Export");
-        ImGui::InputText("File Name", export_file_name_.data(), export_file_name_.size());
-        ImGui::TextWrapped("Folder: %s", path_to_utf8(export_directory_).c_str());
-        if (ImGui::Button("Choose Export Folder"))
-        {
-            IGFD::FileDialogConfig config;
-            config.path = path_to_utf8(export_directory_);
-            config.countSelectionMax = 1;
-            ImGuiFileDialog::Instance()->OpenDialog(
-                kExportDirDialogKey,
-                "Choose Export Folder",
-                nullptr,
-                config);
-        }
-        if (ImGui::Button("Export Canvas PNG", ImVec2(-1.0f, 0.0f)))
-        {
-            request_export_canvas();
-        }
-
-        if (!export_status_message_.empty())
-        {
-            ImGui::Spacing();
-            ImGui::TextWrapped("%s", export_status_message_.c_str());
         }
     }
     ImGui::End();

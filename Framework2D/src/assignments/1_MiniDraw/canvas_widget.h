@@ -30,7 +30,6 @@ class Canvas : public Widget
         kEllipse = 3,
         kPolygon = 4,
         kFreehand = 5,
-        kEraser = 6,
     };
 
     // Shape type setters.
@@ -40,11 +39,11 @@ class Canvas : public Widget
     void set_ellipse();
     void set_polygon();
     void set_freehand();
-    void set_eraser();
     ShapeType shape_type() const;
 
     Shape::Config& mutable_pending_config();
     const Shape::Config& pending_config() const;
+    bool tool_supports_fill(ShapeType type) const;
 
     // Clears all shapes from the canvas.
     void clear_shape_list();
@@ -65,21 +64,39 @@ class Canvas : public Widget
     bool antialiasing() const;
     void set_max_undo_steps(int steps);
     int max_undo_steps() const;
-    void set_eraser_tolerance(float tolerance);
-    float eraser_tolerance() const;
     ImVec2 canvas_min() const;
     ImVec2 canvas_size() const;
     bool is_canvas_hovered() const;
+    bool has_selected_shape() const;
+    const Shape* selected_shape() const;
+    Shape::Config selected_shape_config() const;
+    bool selected_shape_supports_fill() const;
+    const char* selected_shape_type_name() const;
+    float selected_shape_rotation_degrees() const;
+    void begin_selected_shape_edit();
+    void end_selected_shape_edit();
+    void set_selected_shape_config(const Shape::Config& config);
+    void set_selected_shape_rotation_degrees(float degrees);
+    void scale_selected_shape(float factor);
+    void delete_selected_shape();
+    void clear_selection();
 
    private:
     // Drawing functions.
     void draw_background();
     void draw_shapes();
+    void draw_selection_overlay();
     void commit_shape(const std::shared_ptr<Shape>& shape);
     void cancel_current_shape();
-    bool erase_shape_at(float x, float y);
     void save_undo_state();
-    void draw_eraser_overlay();
+    std::vector<std::shared_ptr<Shape>> clone_shape_list(
+        const std::vector<std::shared_ptr<Shape>>& shapes) const;
+    void begin_edit_transaction();
+    void end_edit_transaction_internal();
+    int find_shape_at(const ImVec2& position) const;
+    Shape* mutable_selected_shape();
+    const Shape* selected_shape_internal() const;
+    void validate_selection();
     bool is_drag_shape(ShapeType type) const;
     bool has_drag_distance() const;
     void trim_history();
@@ -120,7 +137,14 @@ class Canvas : public Widget
     std::vector<std::shared_ptr<Shape>> shape_list_;
     std::vector<std::vector<std::shared_ptr<Shape>>> undo_history_;
     std::vector<std::vector<std::shared_ptr<Shape>>> redo_history_;
-    float eraser_tolerance_ = 10.0f;
+
+    int selected_shape_index_ = -1;
+    bool selection_drag_candidate_ = false;
+    bool selection_drag_active_ = false;
+    bool edit_transaction_active_ = false;
+    ImVec2 selection_press_pos_ = ImVec2(0.0f, 0.0f);
+    ImVec2 selection_last_mouse_pos_ = ImVec2(0.0f, 0.0f);
+    float selection_tolerance_ = 8.0f;
 };
 
 }  // namespace USTC_CG

@@ -28,7 +28,6 @@ class Window
     // Virtual draw function to be implemented by derived classes for custom
     // rendering.
     virtual void draw();
-    virtual void post_render();
 
    protected:
     // Initializes GLFW library.

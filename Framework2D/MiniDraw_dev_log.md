@@ -9,10 +9,8 @@ The work covered:
 - canvas interaction logic and robustness improvements
 - style binding and fill support
 - UI restructuring
-- undo/redo and eraser support
-- PNG export and export-folder selection
-- Chinese path support investigation and fixes
-- suppression of noisy file-dialog console errors
+- undo/redo support
+- refactoring to remove eraser, export, and framework-level modifications
 
 ## 2. Main Goals Achieved
 
@@ -23,11 +21,11 @@ The following features are now implemented or significantly improved:
 - The MiniDraw UI is split into a top menu, left tool palette, center canvas, right properties panel, and settings panel.
 - Undo/redo works through snapshot-based history rather than only removing the last shape.
 - Concave polygons are filled correctly.
-- An eraser tool with visual feedback is available.
-- Canvas export to PNG is supported.
-- Export folder selection is available inside settings.
-- Chinese directory paths can now be browsed in the export-folder dialog.
-- File-dialog metadata failures no longer spam the console.
+
+The following features were previously implemented but have been removed:
+- Eraser tool (removed to simplify the codebase).
+- PNG canvas export and export-folder selection (removed because they required modifications to shared framework files `window.h` and `window.cpp`).
+- Chinese font loading and file-dialog error suppression (removed as they required changes to `window.cpp` and `ImGuiFileDialog.cpp`).
 
 ## 3. Development Timeline
 
@@ -222,6 +220,108 @@ Result:
 - metadata failure becomes a silent fallback
 - console spam is removed
 
+### Stage L: Refactoring — Revert Framework Changes, Remove Eraser and Export
+
+A refactoring pass was performed to ensure all project changes remain within the `src/assignments/1_MiniDraw/` directory. Modifications that had been applied to shared framework files and third-party code were reverted.
+
+Reverted files:
+- `include/common/window.h` — removed `virtual void post_render();` declaration
+- `src/common/window.cpp` — removed `post_render()` definition and call in `render()`, removed Chinese font loading, removed `#include <array>` and `#include <filesystem>`
+- `third_party/ImGuiFileDialog/ImGuiFileDialog.cpp` — restored original `GetFileDateAndSize` with try-catch (reverted non-throwing error_code and `localtime_s` changes)
+
+Removed features:
+- **Eraser tool**: the `kEraser` shape type, `set_eraser()`, `erase_shape_at()`, `draw_eraser_overlay()`, eraser tolerance controls, and `Shape::hit_test()` from the base class and all derived shape classes were removed.
+- **PNG export**: `post_render()` override, `export_canvas_to_png()`, `request_export_canvas()`, `process_export_directory_dialog()`, the File menu, Ctrl+E shortcut, export settings UI, stb_image_write integration, and ImGuiFileDialog usage were removed from `minidraw_window`.
+- **Chinese font loading**: reverted to framework default font handling.
+- **File-dialog error suppression**: reverted to upstream ImGuiFileDialog behavior.
+
+Reason for removal:
+- PNG export requires a `post_render()` hook in the base `Window` class, which runs after OpenGL rendering but before buffer swap. There is no way to capture framebuffer pixels from within the `draw()` override since ImGui only builds command lists during `draw()` — actual OpenGL rendering happens later in the base class's `render()` method. Without modifying the framework, this feature cannot be implemented.
+- Chinese font loading requires changes to `Window::init_gui()` in the framework.
+- File-dialog error suppression requires changes to the third-party ImGuiFileDialog source.
+- The eraser was removed as a standalone simplification request.
+
+Key files modified:
+- `src/assignments/1_MiniDraw/canvas_widget.h`
+- `src/assignments/1_MiniDraw/canvas_widget.cpp`
+- `src/assignments/1_MiniDraw/minidraw_window.h`
+- `src/assignments/1_MiniDraw/minidraw_window.cpp`
+- `src/assignments/1_MiniDraw/shapes/shape.h`
+- `src/assignments/1_MiniDraw/shapes/line.h` / `line.cpp`
+- `src/assignments/1_MiniDraw/shapes/rect.h` / `rect.cpp`
+- `src/assignments/1_MiniDraw/shapes/ellipse.h` / `ellipse.cpp`
+- `src/assignments/1_MiniDraw/shapes/polygon.h` / `polygon.cpp`
+- `src/assignments/1_MiniDraw/shapes/freehand.h` / `freehand.cpp`
+
+Build verification:
+- target `1_MiniDraw` compiles and links successfully after all changes
+
+### Stage M: Shape Selection, Editing, and Context-Sensitive Properties Panel
+
+Two major features were added entirely within `src/assignments/1_MiniDraw/`:
+
+**1. Shape selection and editing (Select tool)**
+
+A new `kDefault` / "Select" mode was added to the toolbar. When active:
+- clicking on a shape performs top-down hit testing (`find_shape_at`) and selects it
+- clicking on empty canvas clears the selection
+- dragging a selected shape translates it (with a dead-zone threshold to avoid accidental drags)
+- the Properties panel shows the selected shape's current style, rotation, scale controls, and a Delete button
+- `Delete` key deletes the selected shape
+
+Selection is indicated by a gold bounding-box overlay (`draw_selection_overlay`).
+
+All editing operations use an edit-transaction model:
+- `begin_edit_transaction()` saves a single undo snapshot at the start
+- continuous edits (drag, slider) modify the shape in-place
+- `end_edit_transaction()` closes the transaction
+This avoids creating one undo entry per pixel of drag or per slider tick.
+
+Shape interface additions in `Shape` base class:
+- `clone()` — deep copy for undo history
+- `hit_test(x, y, tolerance)` — per-shape point picking
+- `translate(dx, dy)` — rigid body translation
+- `scale(sx, sy, anchor)` — scale relative to anchor
+- `rotate(radians, anchor)` — rotate relative to anchor
+- `center()`, `bounds_min()`, `bounds_max()` — AABB queries
+- `rotation_radians()`, `set_rotation_radians()` — rotation state
+- `type_name()` — display string for the Properties panel
+- `supports_fill()` — whether the shape accepts fill (Rect, Ellipse, Polygon return true)
+
+Each concrete shape (Line, Rect, Ellipse, Polygon, Freehand) implements all of the above.
+
+Hit-test algorithms per shape:
+- **Line / Freehand**: point-to-segment distance against polyline segments
+- **Rect**: inverse-rotate point into local space, then AABB test (interior for filled, edge-proximity for outline)
+- **Ellipse**: inverse-rotate point, then normalized ellipse equation (interior or annulus)
+- **Polygon**: edge distance + ray-casting point-in-polygon for filled shapes
+
+Rotation-aware rendering:
+- `Rect::draw()` computes rotated corner vertices and draws via `AddQuad` / `AddQuadFilled`
+- `Ellipse::draw()` passes `rotation_radians_` to ImGui's `AddEllipse` / `AddEllipseFilled`
+- `Polygon` and `Freehand` store already-rotated vertex data
+
+**2. Context-sensitive Properties panel**
+
+The Properties panel now adapts to the active tool:
+- **Select mode (`kDefault`)**: if a shape is selected, shows its editable style (line color, thickness, fill toggle + fill color if applicable, rotation slider, scale buttons, delete). If nothing is selected, shows an instructional message.
+- **Drawing tools (Line, Rect, Ellipse, Polygon, Freehand)**: shows the "Next Shape Style" editor that only includes controls relevant to the tool — Line and Freehand hide the fill checkbox; Rect, Ellipse, and Polygon show it.
+
+A shared `draw_config_editor()` helper handles both selection editing and pending-style editing, with an `apply_to_selection` flag controlling whether changes invoke edit transactions on the selected shape.
+
+Key files modified:
+- `src/assignments/1_MiniDraw/shapes/shape.h` — added `clone`, `hit_test`, `translate`, `scale`, `rotate`, `center`, `bounds_min`, `bounds_max`, `rotation_radians`, `set_rotation_radians`, `type_name`, `supports_fill`, `mutable_shape_config`
+- `src/assignments/1_MiniDraw/shapes/line.h` / `line.cpp` — implemented all new virtuals, `rotate_point` / `scale_point` / `point_to_segment_distance` helpers
+- `src/assignments/1_MiniDraw/shapes/rect.h` / `rect.cpp` — rotation-aware draw with `AddQuad`, local-space hit test
+- `src/assignments/1_MiniDraw/shapes/ellipse.h` / `ellipse.cpp` — parametric rotation via ImGui API, normalized hit test
+- `src/assignments/1_MiniDraw/shapes/polygon.h` / `polygon.cpp` — vertex-set transforms, ray-cast hit test
+- `src/assignments/1_MiniDraw/shapes/freehand.h` / `freehand.cpp` — point-set transforms
+- `src/assignments/1_MiniDraw/canvas_widget.h` / `canvas_widget.cpp` — selection state, drag logic, edit transactions, `find_shape_at`, `draw_selection_overlay`, selection API
+- `src/assignments/1_MiniDraw/minidraw_window.cpp` — `draw_config_editor` helper, context-sensitive `draw_properties_panel`, Select tool in toolbar, Delete shortcut, Delete Selected menu item
+
+Build verification:
+- target `1_MiniDraw` compiles and links successfully (9/9 rebuild, 0 errors, only D9025 warning-override notices from CMake)
+
 ## 4. Key Files Changed
 
 Core drawing and behavior:
@@ -244,13 +344,7 @@ Shape system:
 - `src/assignments/1_MiniDraw/shapes/freehand.h`
 - `src/assignments/1_MiniDraw/shapes/freehand.cpp`
 
-Window and rendering:
-- `include/common/window.h`
-- `src/common/window.cpp`
-
-Third-party integration:
-- `third_party/CMakeLists.txt`
-- `third_party/ImGuiFileDialog/ImGuiFileDialog.cpp`
+Note: `include/common/window.h`, `src/common/window.cpp`, and `third_party/ImGuiFileDialog/ImGuiFileDialog.cpp` were modified earlier but have been reverted to their original versions in Stage L. All current changes reside within `src/assignments/1_MiniDraw/`.
 
 ## 5. Validation and Build Status
 
@@ -260,17 +354,17 @@ Validation performed during development:
 - iterative runtime verification by observing user-reported behavior and screenshots
 
 Latest verified build status:
-- `1_MiniDraw` builds successfully after the latest `ImGuiFileDialog` console-error suppression patch
+- `1_MiniDraw` builds and links successfully after Stage M (9/9 rebuilt, 0 errors)
 
 ## 6. Current Limitations
 
 The following limitations still exist or should be stated carefully in the report:
 - self-intersecting polygons are not specially handled; normal concave polygon filling works, but more complex polygon-topology cases are outside the current scope
-- export is based on framebuffer capture of the visible canvas region, not a separate off-screen renderer
-- export currently targets PNG only
-- the file dialog behavior still depends on `ImGuiFileDialog` and `std::filesystem` behavior on Windows and OneDrive-backed folders
-- the latest file-dialog console fix intentionally suppresses recoverable metadata errors instead of surfacing every low-level filesystem anomaly
-- object selection/editing mode was not implemented; an eraser tool was used instead as the practical interaction extension
+- PNG export is not available — it requires a `post_render()` hook in the base `Window` class (framework modification), which has been reverted
+- Chinese font loading is not available — requires modifying `Window::init_gui()` in the framework
+- ImGuiFileDialog may produce console warnings from upstream `std::localtime` usage on MSVC (non-breaking)
+- selection only supports single-shape; multi-select is not implemented
+- rotation for Rect and Ellipse is stored as a cumulative angle; very large accumulated rotations could lose floating-point precision (not an issue in normal use)
 
 ## 7. Suitable Points for the Assignment Report
 
@@ -278,23 +372,19 @@ The following report angles are recommended:
 - explain how polymorphism was used to unify all shape drawing behaviors under `Shape`
 - explain why style data was moved into each shape instance rather than stored globally
 - describe the difference between drag-based shapes and click-finalized polygon construction
-- highlight the use of hit testing to support erasing
 - mention the snapshot-based undo/redo design and why it is more robust than last-operation pop/push only
-- explain the export pipeline: render, capture framebuffer region, save PNG
-- mention Windows path encoding and third-party file-dialog integration as a practical engineering challenge
-- explicitly note that some fixes were not just feature additions but robustness improvements for real user scenarios
+- describe the selection/editing workflow: hit testing, edit transactions, rotation and scale transforms
+- explain the context-sensitive Properties panel that adapts displayed controls to the active tool
+- discuss the refactoring decision to keep all changes within the assignment folder, and which features (export) could not be re-implemented without framework modifications
 
 ## 8. Final Outcome Summary
 
-At the current stage, `MiniDraw` is no longer just the original simple line/rectangle demo. It has been upgraded into a multi-tool drawing application inside the assignment framework, with:
-- multiple shape types
-- per-shape style persistence
-- fill support
-- structured UI
-- undo/redo
-- eraser
-- PNG export
-- Chinese path-capable export-folder browsing
-- reduced console noise and more stable file-dialog behavior
+At the current stage, `MiniDraw` has been developed into a multi-tool drawing application inside the assignment framework, with all changes contained within `src/assignments/1_MiniDraw/`:
+- multiple shape types (line, rectangle, ellipse, polygon, freehand)
+- per-shape style persistence (color, thickness, fill)
+- structured ImGui-based UI with toolbar, context-sensitive properties panel, and settings
+- undo/redo via deep-cloned shape-list snapshots
+- shape selection with hit testing, drag-to-move, rotation, scaling, style editing, and deletion
+- context-sensitive Properties panel that adapts to the active tool
 
-This makes the project suitable for both functional demonstration and engineering-oriented discussion in the final assignment report.
+Features previously implemented but removed during Stage L refactoring (eraser, PNG export, Chinese font support) are documented in the log for reference. The project is suitable for functional demonstration and engineering-oriented discussion in the final assignment report.

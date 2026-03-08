@@ -2,50 +2,73 @@
 
 #include <algorithm>
 #include <cmath>
-
 #include <imgui.h>
 
 namespace USTC_CG
 {
 namespace
 {
-float point_to_segment_distance(
-    float px,
-    float py,
-    float ax,
-    float ay,
-    float bx,
-    float by)
+ImVec2 rotate_point(const ImVec2& point, const ImVec2& anchor, float radians)
 {
-    const float abx = bx - ax;
-    const float aby = by - ay;
-    const float ab_len_sq = abx * abx + aby * aby;
-    if (ab_len_sq <= 1e-6f)
+    const float sine = std::sin(radians);
+    const float cosine = std::cos(radians);
+    const float dx = point.x - anchor.x;
+    const float dy = point.y - anchor.y;
+    return ImVec2(
+        anchor.x + dx * cosine - dy * sine,
+        anchor.y + dx * sine + dy * cosine);
+}
+
+ImVec2 scale_point(
+    const ImVec2& point,
+    const ImVec2& anchor,
+    float scale_x,
+    float scale_y)
+{
+    return ImVec2(
+        anchor.x + (point.x - anchor.x) * scale_x,
+        anchor.y + (point.y - anchor.y) * scale_y);
+}
+
+float point_to_segment_distance(
+    const ImVec2& point,
+    const ImVec2& segment_start,
+    const ImVec2& segment_end)
+{
+    const float dx = segment_end.x - segment_start.x;
+    const float dy = segment_end.y - segment_start.y;
+    const float length_squared = dx * dx + dy * dy;
+    if (length_squared <= 1e-6f)
     {
-        const float dx = px - ax;
-        const float dy = py - ay;
-        return std::sqrt(dx * dx + dy * dy);
+        const float px = point.x - segment_start.x;
+        const float py = point.y - segment_start.y;
+        return std::sqrt(px * px + py * py);
     }
 
     const float t = std::clamp(
-        ((px - ax) * abx + (py - ay) * aby) / ab_len_sq, 0.0f, 1.0f);
-    const float cx = ax + t * abx;
-    const float cy = ay + t * aby;
-    const float dx = px - cx;
-    const float dy = py - cy;
-    return std::sqrt(dx * dx + dy * dy);
+        ((point.x - segment_start.x) * dx +
+         (point.y - segment_start.y) * dy) /
+            length_squared,
+        0.0f,
+        1.0f);
+    const float projection_x = segment_start.x + t * dx;
+    const float projection_y = segment_start.y + t * dy;
+    const float distance_x = point.x - projection_x;
+    const float distance_y = point.y - projection_y;
+    return std::sqrt(distance_x * distance_x + distance_y * distance_y);
 }
 
-bool point_in_polygon(const std::vector<ImVec2>& vertices, float x, float y)
+bool point_in_polygon(const ImVec2& point, const std::vector<ImVec2>& vertices)
 {
     bool inside = false;
-    const size_t count = vertices.size();
-    for (size_t i = 0, j = count - 1; i < count; j = i++)
+    for (size_t i = 0, j = vertices.size() - 1; i < vertices.size(); j = i++)
     {
-        const ImVec2& a = vertices[i];
-        const ImVec2& b = vertices[j];
-        const bool intersects = ((a.y > y) != (b.y > y)) &&
-                                (x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x);
+        const ImVec2& vi = vertices[i];
+        const ImVec2& vj = vertices[j];
+        const bool intersects =
+            ((vi.y > point.y) != (vj.y > point.y)) &&
+            (point.x <
+             (vj.x - vi.x) * (point.y - vi.y) / ((vj.y - vi.y) + 1e-6f) + vi.x);
         if (intersects)
         {
             inside = !inside;
@@ -53,7 +76,7 @@ bool point_in_polygon(const std::vector<ImVec2>& vertices, float x, float y)
     }
     return inside;
 }
-}
+}  // namespace
 
 void Polygon::draw(const Config& config) const
 {
@@ -94,49 +117,6 @@ void Polygon::update(float x, float y)
     }
 }
 
-bool Polygon::hit_test(float x, float y, float tolerance) const
-{
-    if (vertices_.size() < 2)
-    {
-        return false;
-    }
-
-    const auto& style = shape_config();
-    if (style.is_filled && is_closed_ && vertices_.size() >= 3 &&
-        point_in_polygon(vertices_, x, y))
-    {
-        return true;
-    }
-
-    const float expanded_tolerance = tolerance + style.line_thickness * 0.5f;
-    for (size_t i = 1; i < vertices_.size(); ++i)
-    {
-        if (point_to_segment_distance(
-                x,
-                y,
-                vertices_[i - 1].x,
-                vertices_[i - 1].y,
-                vertices_[i].x,
-                vertices_[i].y) <= expanded_tolerance)
-        {
-            return true;
-        }
-    }
-
-    if (is_closed_)
-    {
-        return point_to_segment_distance(
-                   x,
-                   y,
-                   vertices_.back().x,
-                   vertices_.back().y,
-                   vertices_.front().x,
-                   vertices_.front().y) <= expanded_tolerance;
-    }
-
-    return false;
-}
-
 void Polygon::add_control_point(float x, float y)
 {
     if (vertices_.empty())
@@ -169,6 +149,125 @@ bool Polygon::finalize()
     }
 
     close();
+    return true;
+}
+
+std::shared_ptr<Shape> Polygon::clone() const
+{
+    return std::make_shared<Polygon>(*this);
+}
+
+bool Polygon::hit_test(float x, float y, float tolerance) const
+{
+    if (vertices_.size() < 2)
+    {
+        return false;
+    }
+
+    const ImVec2 point(x, y);
+    for (size_t i = 1; i < vertices_.size(); ++i)
+    {
+        if (point_to_segment_distance(point, vertices_[i - 1], vertices_[i]) <=
+            tolerance + config().line_thickness * 0.5f)
+        {
+            return true;
+        }
+    }
+
+    if (is_closed_ &&
+        point_to_segment_distance(point, vertices_.back(), vertices_.front()) <=
+            tolerance + config().line_thickness * 0.5f)
+    {
+        return true;
+    }
+
+    return config().is_filled && is_closed_ && point_in_polygon(point, vertices_);
+}
+
+void Polygon::translate(float dx, float dy)
+{
+    for (auto& vertex : vertices_)
+    {
+        vertex.x += dx;
+        vertex.y += dy;
+    }
+}
+
+void Polygon::scale(float scale_x, float scale_y, const ImVec2& anchor)
+{
+    for (auto& vertex : vertices_)
+    {
+        vertex = scale_point(vertex, anchor, scale_x, scale_y);
+    }
+}
+
+void Polygon::rotate(float radians, const ImVec2& anchor)
+{
+    for (auto& vertex : vertices_)
+    {
+        vertex = rotate_point(vertex, anchor, radians);
+    }
+    rotation_radians_ += radians;
+}
+
+ImVec2 Polygon::center() const
+{
+    const ImVec2 min_point = bounds_min();
+    const ImVec2 max_point = bounds_max();
+    return ImVec2(
+        (min_point.x + max_point.x) * 0.5f,
+        (min_point.y + max_point.y) * 0.5f);
+}
+
+ImVec2 Polygon::bounds_min() const
+{
+    if (vertices_.empty())
+    {
+        return ImVec2(0.0f, 0.0f);
+    }
+
+    ImVec2 result = vertices_.front();
+    for (const auto& vertex : vertices_)
+    {
+        result.x = std::min(result.x, vertex.x);
+        result.y = std::min(result.y, vertex.y);
+    }
+    return result;
+}
+
+ImVec2 Polygon::bounds_max() const
+{
+    if (vertices_.empty())
+    {
+        return ImVec2(0.0f, 0.0f);
+    }
+
+    ImVec2 result = vertices_.front();
+    for (const auto& vertex : vertices_)
+    {
+        result.x = std::max(result.x, vertex.x);
+        result.y = std::max(result.y, vertex.y);
+    }
+    return result;
+}
+
+float Polygon::rotation_radians() const
+{
+    return rotation_radians_;
+}
+
+void Polygon::set_rotation_radians(float radians)
+{
+    rotate(radians - rotation_radians_, center());
+}
+
+const char* Polygon::type_name() const
+{
+    return "Polygon";
+}
+
+bool Polygon::supports_fill() const
+{
     return true;
 }
 }  // namespace USTC_CG
