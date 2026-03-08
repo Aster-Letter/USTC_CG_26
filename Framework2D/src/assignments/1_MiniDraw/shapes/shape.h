@@ -1,5 +1,7 @@
 #pragma once
 
+#include <imgui.h>
+
 namespace USTC_CG
 {
 class Shape
@@ -10,12 +12,16 @@ class Shape
     {
         // Offset to convert canvas position to screen position
         float bias[2] = { 0.f, 0.f };
-        // Line color in RGBA format
-        unsigned char line_color[4] = { 255, 0, 0, 255 };
+        // ImGui editors work natively with normalized RGBA floats.
+        float line_color[4] = { 1.f, 0.f, 0.f, 1.f };
         float line_thickness = 2.0f;
+        bool is_filled = false;
+        float fill_color[4] = { 1.f, 1.f, 1.f, 1.f };
     };
 
    public:
+    Shape() = default;
+    explicit Shape(const Config& config) : config_(config) {}
     virtual ~Shape() = default;
 
     /**
@@ -39,6 +45,7 @@ class Shape
      * @param x, y Dragging point. e.g. end point of a line.
      */
     virtual void update(float x, float y) = 0;
+    virtual bool hit_test(float x, float y, float tolerance) const = 0;
     /**
      * Adds a control point to the shape.
      * This function is used to add control points to the shape, which can be
@@ -46,6 +53,25 @@ class Shape
      *
      * @param x, y Control point to be added. e.g. vertex of a polygon.
      */
-    virtual void add_control_point(float x, float y) {}
+    virtual void add_control_point(float x, float y)
+    {
+        static_cast<void>(x);
+        static_cast<void>(y);
+    }
+
+   protected:
+    const Config& shape_config() const
+    {
+        return config_;
+    }
+
+    static ImU32 to_imcolor(const float color[4])
+    {
+        return ImGui::ColorConvertFloat4ToU32(
+            ImVec4(color[0], color[1], color[2], color[3]));
+    }
+
+   private:
+    Config config_;
 };
 }  // namespace USTC_CG

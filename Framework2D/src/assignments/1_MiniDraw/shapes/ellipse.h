@@ -4,13 +4,12 @@
 
 namespace USTC_CG
 {
-class Rect : public Shape
+class Ellipse : public Shape
 {
    public:
-    Rect() = default;
+    Ellipse() = default;
 
-    // Initialize a rectangle with start and end points
-    Rect(
+    Ellipse(
         float start_point_x,
         float start_point_y,
         float end_point_x,
@@ -24,20 +23,17 @@ class Rect : public Shape
     {
     }
 
-    virtual ~Rect() = default;
+    virtual ~Ellipse() = default;
 
-    // Draws the rectangle on the screen
-    // Overrides draw function to implement rectangle-specific drawing logic
+    // Overrides draw function to implement ellipse-specific drawing logic
     void draw(const Config& config) const override;
-
-    // Overrides Shape's update function to adjust the rectangle size during
-    // interaction
     void update(float x, float y) override;
     bool hit_test(float x, float y, float tolerance) const override;
 
    private:
-    // Coordinates of the top-left and bottom-right corners of the rectangle
-    float start_point_x_ = 0.0f, start_point_y_ = 0.0f;
-    float end_point_x_ = 0.0f, end_point_y_ = 0.0f;
+    float start_point_x_ = 0.0f;
+    float start_point_y_ = 0.0f;
+    float end_point_x_ = 0.0f;
+    float end_point_y_ = 0.0f;
 };
 }  // namespace USTC_CG

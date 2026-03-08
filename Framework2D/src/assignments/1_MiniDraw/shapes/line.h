@@ -14,8 +14,10 @@ class Line : public Shape
         float start_point_x,
         float start_point_y,
         float end_point_x,
-        float end_point_y)
-        : start_point_x_(start_point_x),
+        float end_point_y,
+        const Config& config = Config())
+        : Shape(config),
+          start_point_x_(start_point_x),
           start_point_y_(start_point_y),
           end_point_x_(end_point_x),
           end_point_y_(end_point_y)
@@ -30,8 +32,12 @@ class Line : public Shape
     // Overrides Shape's update function to adjust the end point during
     // interaction
     void update(float x, float y) override;
+    bool hit_test(float x, float y, float tolerance) const override;
 
    private:
-    float start_point_x_, start_point_y_, end_point_x_, end_point_y_;
+    float start_point_x_ = 0.0f;
+    float start_point_y_ = 0.0f;
+    float end_point_x_ = 0.0f;
+    float end_point_y_ = 0.0f;
 };
 }  // namespace USTC_CG

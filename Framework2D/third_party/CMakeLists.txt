@@ -30,6 +30,9 @@ file(GLOB source
     "${imgui_file_SOURCE_DIR}/*.cpp"
 )
 add_library(imgui ${source})
+target_compile_definitions(imgui
+  PRIVATE USE_STD_FILESYSTEM
+)
 target_include_directories(imgui
     PUBLIC "${imgui_SOURCE_DIR}"
     PUBLIC "${imgui_SOURCE_DIR}/backends"

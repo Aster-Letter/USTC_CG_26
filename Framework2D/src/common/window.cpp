@@ -4,6 +4,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include <array>
+#include <filesystem>
 #include <iostream>
 
 namespace USTC_CG
@@ -71,6 +73,10 @@ void Window::draw()
     ImGui::ShowDemoWindow();
 }
 
+void Window::post_render()
+{
+}
+
 bool Window::init_glfw()
 {
     glfwSetErrorCallback(
@@ -107,11 +113,48 @@ bool Window::init_gui()
 
     ImGuiIO& io = ImGui::GetIO();
     (void)io; 
-    // - fontsize
     float xscale, yscale;
     glfwGetWindowContentScale(window_, &xscale, &yscale);
+
+#if defined(_WIN32)
+    bool font_loaded = false;
+    const std::array<const char*, 4> font_candidates = {
+        "C:/Windows/Fonts/msyh.ttc",
+        "C:/Windows/Fonts/msyh.ttf",
+        "C:/Windows/Fonts/simhei.ttf",
+        "C:/Windows/Fonts/simsun.ttc",
+    };
+    for (const auto* font_path : font_candidates)
+    {
+        if (std::filesystem::exists(font_path))
+        {
+            if (
+                io.Fonts->AddFontFromFileTTF(
+                    font_path,
+                    16.0f * xscale,
+                    nullptr,
+                    io.Fonts->GetGlyphRangesChineseFull()) != nullptr)
+            {
+                font_loaded = true;
+                break;
+            }
+        }
+    }
+
+    if (font_loaded)
+    {
+        io.FontGlobalScale = 1.0f;
+    }
+    else
+    {
+        io.Fonts->AddFontDefault();
+        io.FontGlobalScale = xscale;
+    }
+#else
+    io.Fonts->AddFontDefault();
     io.FontGlobalScale = xscale;
-    // - style
+#endif
+
     ImGui::StyleColorsDark();
 
     ImGui_ImplGlfw_InitForOpenGL(window_, true);
@@ -142,6 +185,7 @@ void Window::render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    post_render();
 
     glfwSwapBuffers(window_);
 }
