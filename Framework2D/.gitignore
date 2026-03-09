@@ -1,4 +1,9 @@
 build/
+.vs/
+build_clanguml/
+build_clanguml_j/
+out/
+report/
 bin/
 libs/
 .vscode

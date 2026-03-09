@@ -1,4 +1,6 @@
 build/
+build_clanguml/
+build_clanguml_j/
 bin/
 libs/
 .vscode
