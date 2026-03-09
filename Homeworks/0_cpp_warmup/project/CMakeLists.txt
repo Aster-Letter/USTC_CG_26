@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 # VS 2026 (18.x) support depends on the CMake generator version.
 # Generator selection happens before this file is parsed, so we only provide
