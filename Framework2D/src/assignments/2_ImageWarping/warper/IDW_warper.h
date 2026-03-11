@@ -10,8 +10,14 @@ class IDWWarper : public Warper
    public:
     IDWWarper() = default;
     virtual ~IDWWarper() = default;
-    // HW2_TODO: Implement the warp(...) function with IDW interpolation
+    void set_weight_power(double weight_power);
+    Point warp(const Point& point) const override;
 
-    // HW2_TODO: other functions or variables if you need
+   protected:
+    void on_control_points_updated() override;
+
+   private:
+    double weight_power_ = 2.0;
+    std::vector<Matrix2> local_transforms_;
 };
 }  // namespace USTC_CG

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "common/image_widget.h"
 
 namespace USTC_CG
@@ -36,6 +38,13 @@ class WarpingWidget : public ImageWidget
     void set_fisheye();
     void set_IDW();
     void set_RBF();
+    void set_fisheye_strength(float strength);
+    void set_idw_power(float power);
+    void set_rbf_radius_scale(float scale);
+    void reset_warping_parameters();
+    [[nodiscard]] float fisheye_strength() const;
+    [[nodiscard]] float idw_power() const;
+    [[nodiscard]] float rbf_radius_scale() const;
 
     // Point selecting interaction
     void enable_selecting(bool flag);
@@ -52,10 +61,17 @@ class WarpingWidget : public ImageWidget
     bool flag_enable_selecting_points_ = false;
     bool draw_status_ = false;
     WarpingType warping_type_;
+    float fisheye_strength_ = 10.0f;
+    float idw_power_ = 2.0f;
+    float rbf_radius_scale_ = 1.0f;
+    float background_gray_ = 96.0f;
 
    private:
-    // A simple "fish-eye" warping function
-    std::pair<int, int> fisheye_warping(int x, int y, int width, int height);
+    std::pair<double, double> fisheye_inverse_warping(
+        double x,
+        double y,
+        int width,
+        int height) const;
 };
 
 }  // namespace USTC_CG

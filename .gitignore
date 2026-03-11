@@ -9,3 +9,4 @@ imgui.ini
 .vs
 *.zip
 sync_logs/
+docs-agent/

@@ -87,7 +87,29 @@ void ImageWarping::draw_toolbar()
             p_image_->set_IDW();
         else if (warping_type == 2 && p_image_)
             p_image_->set_RBF();
-        // HW2_TODO: You can add more interactions for IDW, RBF, etc.
+        if (p_image_ && ImGui::BeginMenu("Params"))
+        {
+            float fisheye_strength = p_image_->fisheye_strength();
+            float idw_power = p_image_->idw_power();
+            float rbf_radius_scale = p_image_->rbf_radius_scale();
+            if (ImGui::SliderFloat("Fisheye Strength", &fisheye_strength, 1.0f, 20.0f))
+            {
+                p_image_->set_fisheye_strength(fisheye_strength);
+            }
+            if (ImGui::SliderFloat("IDW Power", &idw_power, 1.05f, 8.0f))
+            {
+                p_image_->set_idw_power(idw_power);
+            }
+            if (ImGui::SliderFloat("RBF Radius Scale", &rbf_radius_scale, 0.1f, 4.0f))
+            {
+                p_image_->set_rbf_radius_scale(rbf_radius_scale);
+            }
+            if (ImGui::MenuItem("Reset Params"))
+            {
+                p_image_->reset_warping_parameters();
+            }
+            ImGui::EndMenu();
+        }
         ImGui::Separator();
         if (ImGui::MenuItem("Restore") && p_image_)
         {

@@ -10,8 +10,19 @@ class RBFWarper : public Warper
    public:
     RBFWarper() = default;
     virtual ~RBFWarper() = default;
-    // HW2_TODO: Implement the warp(...) function with RBF interpolation
+    void set_radius_scale(double radius_scale);
+    Point warp(const Point& point) const override;
 
-    // HW2_TODO: other functions or variables if you need
+   protected:
+    void on_control_points_updated() override;
+
+   private:
+    [[nodiscard]] double basis_function(std::size_t index, double distance) const;
+
+    Eigen::Matrix2d affine_matrix_ = Eigen::Matrix2d::Identity();
+    Point affine_offset_ = Point::Zero();
+    Eigen::MatrixXd radial_weights_;
+    std::vector<double> radii_;
+    double radius_scale_ = 1.0;
 };
 }  // namespace USTC_CG
