@@ -10,4 +10,5 @@ imgui.ini
 *.zip
 sync_logs/
 docs-agent/
-Framework3D
+/Framework3D
+Framework3D/Ruzino
