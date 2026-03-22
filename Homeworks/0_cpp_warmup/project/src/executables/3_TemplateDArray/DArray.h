@@ -7,7 +7,7 @@ template<class T>
 class DArray {
 public:
     DArray();
-    DArray(int nSize, const T& dValue = static_cast<T>(0));
+    DArray(int nSize, const T& dValue = T());
     DArray(const DArray& arr);
     ~DArray();
 

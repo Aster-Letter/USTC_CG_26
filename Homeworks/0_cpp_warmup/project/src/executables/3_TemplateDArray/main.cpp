@@ -72,7 +72,5 @@ int main(int argc, char** argv) {
 	(void)s.GetAt(99);
 
 	std::cout << "All template DArray checks passed." << std::endl;
-
-    system("pause");
 	return 0;
 }

@@ -138,7 +138,13 @@ void DArray<T>::SetAt(int nIndex, const T& dValue) {
 
 template<class T>
 T& DArray<T>::operator[](int nIndex) {
-    return const_cast<T&>(static_cast<const DArray&>(*this).GetAt(nIndex));
+    if (nIndex < 0 || nIndex >= m_nSize) {
+        std::cerr << "Error: index out of range. Return default value." << std::endl;
+        static T s_error = T();
+        return s_error;
+    }
+
+    return m_pData[nIndex];
 }
 
 template<class T>
@@ -149,7 +155,7 @@ const T& DArray<T>::operator[](int nIndex) const {
 template<class T>
 void DArray<T>::PushBack(const T& dValue) {
     if (m_nSize == m_nMax) {
-        Reserve(m_nMax * 2 + 1);
+        Reserve((m_nMax > 0) ? (m_nMax * 2) : 1);
     }
 
     m_pData[m_nSize] = dValue;
@@ -177,7 +183,7 @@ void DArray<T>::InsertAt(int nIndex, const T& dValue) {
     }
 
     if (m_nSize == m_nMax) {
-        Reserve(m_nMax * 2 + 1);
+        Reserve((m_nMax > 0) ? (m_nMax * 2) : 1);
     }
 
     for (int i = m_nSize; i > nIndex; --i) {

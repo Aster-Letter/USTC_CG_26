@@ -1,77 +1,125 @@
 #include "PolynomialMap.h"
 
-#include <iostream>
-#include <fstream>
-#include <cassert>
 #include <cmath>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <vector>
 
-using namespace std;
+namespace {
+constexpr double kEpsilon = 1e-8;
 
-PolynomialMap::PolynomialMap(const PolynomialMap& other) {
-	// Special: empty
-	if (other.m_Polynomial.empty()) {
-		return;
-	}
-
-	for (const auto& term : other.m_Polynomial) {
-		m_Polynomial[term.first] = term.second;
-	}
+bool IsZero(double value) {
+	return std::abs(value) < kEpsilon;
 }
 
-PolynomialMap::PolynomialMap(const string& file) {
-    ReadFromFile(file);
-	return;
+double& InvalidCoefficient() {
+	static double s_invalid_coefficient = 0.0;
+	return s_invalid_coefficient;
+}
+
+std::ifstream OpenPolynomialFile(const std::string& file, std::filesystem::path* resolved_path) {
+	namespace fs = std::filesystem;
+
+	const fs::path input_path(file);
+	std::vector<fs::path> candidates;
+	candidates.push_back(input_path);
+
+	const fs::path filename = input_path.filename();
+	if (!filename.empty()) {
+		candidates.push_back(fs::path("data") / filename);
+		candidates.push_back(fs::path("..") / "data" / filename);
+		candidates.push_back(fs::path("project") / "data" / filename);
+	}
+
+	for (const auto& candidate : candidates) {
+		std::ifstream fin(candidate);
+		if (fin.is_open()) {
+			if (resolved_path != nullptr) {
+				*resolved_path = candidate;
+			}
+			return fin;
+		}
+	}
+
+	if (resolved_path != nullptr) {
+		*resolved_path = input_path;
+	}
+	return std::ifstream();
+}
+}
+
+PolynomialMap::PolynomialMap(const PolynomialMap& other)
+	: m_Polynomial(other.m_Polynomial) {
+}
+
+PolynomialMap::PolynomialMap(const std::string& file) {
+	ReadFromFile(file);
 }
 
 PolynomialMap::PolynomialMap(const double* cof, const int* deg, int n) {
-	// Special: negative n
 	if (n < 0) {
-		cout << "Negative n: " << n << endl;
+		std::cerr << "Error: polynomial term count should be non-negative." << std::endl;
 		return;
 	}
-	// Special: negative degree
+	if (n > 0 && (cof == nullptr || deg == nullptr)) {
+		std::cerr << "Error: polynomial input arrays should not be null." << std::endl;
+		return;
+	}
+
 	for (int i = 0; i < n; ++i) {
 		if (deg[i] < 0) {
-			cout << "Negative degree: " << deg[i] << endl;
-			return;
+			std::cerr << "Warning: skip negative degree " << deg[i] << std::endl;
+			continue;
 		}
-	}
-	for (int i = 0; i < n; ++i) {
 		m_Polynomial[deg[i]] += cof[i];
 	}
+	compress();
 }
 
-PolynomialMap::PolynomialMap(const vector<int>& deg, const vector<double>& cof) {
-	assert(deg.size() == cof.size());
-	// Special: negative degree
-	for (size_t i = 0; i < deg.size(); ++i) {
-		if (deg[i] < 0) {
-			cout << "Negative degree: " << deg[i] << endl;
-			return;
-		}
+PolynomialMap::PolynomialMap(const std::vector<int>& deg, const std::vector<double>& cof) {
+	const std::size_t nSize = (deg.size() < cof.size()) ? deg.size() : cof.size();
+	if (deg.size() != cof.size()) {
+		std::cerr << "Warning: degree/coefficient vector sizes do not match."
+		          << " Only the overlapping prefix is used." << std::endl;
 	}
-	for (size_t i = 0; i < deg.size(); ++i) {
+
+	for (std::size_t i = 0; i < nSize; ++i) {
+		if (deg[i] < 0) {
+			std::cerr << "Warning: skip negative degree " << deg[i] << std::endl;
+			continue;
+		}
 		m_Polynomial[deg[i]] += cof[i];
 	}
+	compress();
 }
 
 double PolynomialMap::coff(int i) const {
+	if (i < 0) {
+		return 0.0;
+	}
+
 	auto it = m_Polynomial.find(i);
 	if (it != m_Polynomial.end()) {
 		return it->second;
 	}
-	return 0.f;
+	return 0.0;
 }
 
 double& PolynomialMap::coff(int i) {
-	return m_Polynomial[i]; // default value is 0.f
+	if (i < 0) {
+		std::cerr << "Error: polynomial degree should be non-negative." << std::endl;
+		return InvalidCoefficient();
+	}
+	return m_Polynomial[i];
 }
 
 void PolynomialMap::compress() {
 	for (auto it = m_Polynomial.begin(); it != m_Polynomial.end();) {
-		if (std::abs(it->second) < 1e-8) {
+		if (IsZero(it->second)) {
 			it = m_Polynomial.erase(it);
-		} else {
+		}
+		else {
 			++it;
 		}
 	}
@@ -99,9 +147,7 @@ PolynomialMap PolynomialMap::operator*(const PolynomialMap& right) const {
 	PolynomialMap result;
 	for (const auto& term1 : m_Polynomial) {
 		for (const auto& term2 : right.m_Polynomial) {
-			int deg = term1.first + term2.first;
-			double cof = term1.second * term2.second;
-			result.m_Polynomial[deg] += cof;
+			result.m_Polynomial[term1.first + term2.first] += term1.second * term2.second;
 		}
 	}
 	result.compress();
@@ -109,41 +155,55 @@ PolynomialMap PolynomialMap::operator*(const PolynomialMap& right) const {
 }
 
 PolynomialMap& PolynomialMap::operator=(const PolynomialMap& right) {
-	m_Polynomial = right.m_Polynomial;
+	if (this != &right) {
+		m_Polynomial = right.m_Polynomial;
+	}
 	return *this;
 }
 
 void PolynomialMap::Print() const {
-	// Special: empty
 	if (m_Polynomial.empty()) {
-		cout << "0" << endl;
+		std::cout << "0" << std::endl;
 		return;
 	}
-	for (auto& term = m_Polynomial.rbegin(); term != m_Polynomial.rend(); ++term) {
-		cout << term->second << "x^" << term->first << " ";
+	for (auto it = m_Polynomial.rbegin(); it != m_Polynomial.rend(); ++it) {
+		std::cout << it->second << "x^" << it->first << " ";
 	}
-	cout << endl;
+	std::cout << std::endl;
 }
 
-bool PolynomialMap::ReadFromFile(const string& file) {
-    m_Polynomial.clear();
-	ifstream fin(file);
+bool PolynomialMap::ReadFromFile(const std::string& file) {
+	m_Polynomial.clear();
+
+	std::filesystem::path resolved_path;
+	std::ifstream fin = OpenPolynomialFile(file, &resolved_path);
 	if (!fin.is_open()) {
-		cout << "Failed to open file: " << file << endl;
+		std::cerr << "Error: failed to open file " << file << std::endl;
 		return false;
 	}
-	int deg;
-	double cof;
+
+	char check = 0;
 	int num = 0;
-	char check;
-	if (!(fin >> check >> num) || check != 'P') {
-		cout << "Invalid file format: " << file << endl;
+	if (!(fin >> check >> num) || check != 'P' || num < 0) {
+		std::cerr << "Error: invalid polynomial file header in " << resolved_path.string() << std::endl;
 		return false;
 	}
+
 	for (int i = 0; i < num; ++i) {
-		fin >> deg >> cof;
+		int deg = 0;
+		double cof = 0.0;
+		if (!(fin >> deg >> cof)) {
+			std::cerr << "Error: invalid polynomial term data in " << resolved_path.string() << std::endl;
+			m_Polynomial.clear();
+			return false;
+		}
+		if (deg < 0) {
+			std::cerr << "Warning: skip negative degree " << deg << " in " << resolved_path.string() << std::endl;
+			continue;
+		}
 		m_Polynomial[deg] += cof;
 	}
 
-	return true; // you should return a correct value
+	compress();
+	return true;
 }
