@@ -1,20 +1,22 @@
 #pragma once
 
 #include "source_image_widget.h"
+#include "seamless_clone.h"
 #include "common/image_widget.h"
+
+#include <cstdint>
 
 namespace USTC_CG
 {
 class TargetImageWidget : public ImageWidget
 {
    public:
-    // HW3_TODO: Add more types of cloning, we have implemented the "Paste"
-    // type, you can implement seamless cloning, mix-gradient cloning, etc.
     enum CloneType
     {
         kDefault = 0,
         kPaste = 1,
-        kSeamless = 2
+        kSeamless = 2,
+        kMixing = 3
     };
 
     explicit TargetImageWidget(
@@ -23,37 +25,33 @@ class TargetImageWidget : public ImageWidget
     virtual ~TargetImageWidget() noexcept = default;
 
     void draw() override;
-    // Bind the source image component
     void set_source(std::shared_ptr<SourceImageWidget> source);
-    // Enable real-time updating
     void set_realtime(bool flag);
-    // Restore the target image
     void restore();
-    // HW3_TODO: Add more types of cloning, we have implemented the "Paste"
-    // type, you can implement seamless cloning, mix-gradient cloning, etc.
     void set_paste();
     void set_seamless();
-
-    // The clone function
+    void set_mixing();
     void clone();
 
    private:
-    // Event handlers for mouse interactions.
     void mouse_click_event();
     void mouse_move_event();
     void mouse_release_event();
-
-    // Calculates mouse's relative position in the canvas.
+    void invalidate_cached_solver();
     ImVec2 mouse_pos_in_canvas() const;
 
-    // Store the original image data
     std::shared_ptr<Image> back_up_;
-    // Source image
     std::shared_ptr<SourceImageWidget> source_image_;
     CloneType clone_type_ = kDefault;
 
     ImVec2 mouse_position_;
     bool edit_status_ = false;
     bool flag_realtime_updating = false;
+
+    // Cached Poisson solver for realtime updates
+    std::unique_ptr<SeamlessClone> solver_;
+    std::uint64_t cached_selection_version_ = 0;
+    CloneType cached_clone_type_ = kDefault;
+    float cached_clone_scale_ = 1.0f;
 };
 }  // namespace USTC_CG

@@ -4,12 +4,12 @@
 
 namespace USTC_CG
 {
-class Rect : public Shape
+class Ellipse : public Shape
 {
    public:
-    Rect() = default;
+    Ellipse() = default;
 
-    Rect(
+    Ellipse(
         float start_point_x,
         float start_point_y,
         float end_point_x,
@@ -21,14 +21,16 @@ class Rect : public Shape
     {
     }
 
-    virtual ~Rect() = default;
+    virtual ~Ellipse() = default;
 
     void draw(const Config& config) const override;
     void update(float x, float y) override;
     std::vector<std::pair<int, int>> get_interior_pixels() const override;
 
    private:
-    float start_point_x_ = 0.0f, start_point_y_ = 0.0f;
-    float end_point_x_ = 0.0f, end_point_y_ = 0.0f;
+    float start_point_x_ = 0.f;
+    float start_point_y_ = 0.f;
+    float end_point_x_ = 0.f;
+    float end_point_y_ = 0.f;
 };
 }  // namespace USTC_CG

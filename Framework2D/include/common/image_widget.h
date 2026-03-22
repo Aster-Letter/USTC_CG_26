@@ -31,6 +31,18 @@ class ImageWidget : public Widget
     // Retrieves the size (width, height) of the loaded image.
     ImVec2 get_image_size() const;
 
+    ImVec2 get_rendered_size() const;
+
+    ImVec2 get_image_screen_position() const;
+
+    ImVec2 screen_to_image(const ImVec2& screen_pos, bool clamp = true) const;
+
+    ImVec2 image_to_screen(const ImVec2& image_pos) const;
+
+    float get_scale() const;
+
+    void reset_view();
+
     void update();
 
     void save_to_disk(const std::string& filename);
@@ -43,12 +55,18 @@ class ImageWidget : public Widget
     void load_gltexture();
 
    protected:
+    void handle_view_navigation(bool hovered);
+
     std::string filename_;                 // Path to the image file.
     std::shared_ptr<Image> data_;          // Raw pixel data of the image.
     GLuint tex_id_ = 0;                    // OpenGL texture identifier.
 
     ImVec2 position_ = ImVec2(0.0f, 0.0f);  // Position of the image in the GUI.
     int image_width_ = 0, image_height_ = 0;  // Dimensions of the loaded image.
+    ImVec2 pan_offset_ = ImVec2(0.0f, 0.0f);
+    ImVec2 last_pan_mouse_pos_ = ImVec2(0.0f, 0.0f);
+    float scale_ = 1.0f;
+    bool is_panning_ = false;
 };
 
 }  // namespace USTC_CG

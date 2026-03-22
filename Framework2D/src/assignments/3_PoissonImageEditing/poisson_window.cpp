@@ -91,8 +91,22 @@ void PoissonWindow::draw_toolbar()
         add_tooltips(
             "Press this button and then click in the target image, to "
             "clone the selected region to the target image.");
-        // HW3_TODO: You may add more items in the menu for the different types
-        // of Poisson editing.
+
+        if (ImGui::MenuItem("Seamless") && p_target_ && p_source_)
+        {
+            p_target_->set_seamless();
+        }
+        add_tooltips(
+            "Seamless cloning: blend the selected region into the target "
+            "using Poisson image editing (importing gradients).");
+
+        if (ImGui::MenuItem("Mixing") && p_target_ && p_source_)
+        {
+            p_target_->set_mixing();
+        }
+        add_tooltips(
+            "Mixing gradients: blend using the stronger gradient from "
+            "source or target at each pixel.");
 
         ImGui::EndMainMenuBar();
     }
@@ -101,16 +115,18 @@ void PoissonWindow::draw_toolbar()
 void PoissonWindow::draw_target()
 {
     const auto& image_size = p_target_->get_image_size();
-    ImGui::SetNextWindowSize(ImVec2(image_size.x + 60, image_size.y + 60));
+    ImVec2 work_size = ImGui::GetMainViewport()->WorkSize;
+    ImGui::SetNextWindowSize(
+        ImVec2(
+            std::min(image_size.x + 60.0f, work_size.x * 0.45f),
+            std::min(image_size.y + 100.0f, work_size.y * 0.85f)),
+        ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Target Image", &flag_show_target_view_))
     {
-        // Place the image in the center of the window
-        const auto& min = ImGui::GetCursorScreenPos();
-        const auto& size = ImGui::GetContentRegionAvail();
-        ImVec2 pos = ImVec2(
-            min.x + size.x / 2 - image_size.x / 2,
-            min.y + size.y / 2 - image_size.y / 2);
-        p_target_->set_position(pos);
+        ImGui::TextUnformatted("Wheel: zoom | Middle/Right drag: pan");
+        ImGui::TextUnformatted(
+            "Left drag: move pasted patch (Paste always, Seamless/Mixing with Realtime)");
+        p_target_->set_position(ImGui::GetCursorScreenPos());
         p_target_->draw();
     }
     ImGui::End();
@@ -119,16 +135,30 @@ void PoissonWindow::draw_target()
 void PoissonWindow::draw_source()
 {
     const auto& image_size = p_source_->get_image_size();
-    ImGui::SetNextWindowSize(ImVec2(image_size.x + 60, image_size.y + 60));
+    ImVec2 work_size = ImGui::GetMainViewport()->WorkSize;
+    ImGui::SetNextWindowSize(
+        ImVec2(
+            std::min(image_size.x + 60.0f, work_size.x * 0.45f),
+            std::min(image_size.y + 100.0f, work_size.y * 0.85f)),
+        ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Source Image", &flag_show_source_view_))
     {
-        // Place the image in the center of the window
-        const auto& min = ImGui::GetCursorScreenPos();
-        const auto& size = ImGui::GetContentRegionAvail();
-        ImVec2 pos = ImVec2(
-            min.x + size.x / 2 - image_size.x / 2,
-            min.y + size.y / 2 - image_size.y / 2);
-        p_source_->set_position(pos);
+        ImGui::TextUnformatted("Wheel: zoom (= clone scale) | Middle/Right drag: pan");
+        if (p_source_)
+        {
+            ImGui::Text("Clone scale: %.2fx", p_source_->get_clone_scale());
+
+            static int shape_idx = 0;
+            ImGui::SetNextItemWidth(160.0f);
+            const char* shape_names[] = { "Rectangle", "Ellipse", "Freehand" };
+            if (ImGui::Combo("Shape", &shape_idx, shape_names, 3))
+            {
+                using RT = SourceImageWidget::RegionType;
+                const RT types[] = { RT::kRect, RT::kEllipse, RT::kFreehand };
+                p_source_->set_region_type(types[shape_idx]);
+            }
+        }
+        p_source_->set_position(ImGui::GetCursorScreenPos());
         p_source_->draw();
     }
     ImGui::End();
