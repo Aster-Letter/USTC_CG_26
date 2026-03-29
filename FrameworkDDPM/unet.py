@@ -3,6 +3,13 @@ import torch
 import math
 
 
+DEFAULT_IMAGE_CHANNELS = 3
+DEFAULT_DOWN_CHANNELS = (64, 128, 256, 512, 1024)
+DEFAULT_UP_CHANNELS = (1024, 512, 256, 128, 64)
+DEFAULT_OUT_DIM = 3
+DEFAULT_TIME_EMB_DIM = 32
+
+
 class Block(nn.Module):
     def __init__(self, in_ch, out_ch, time_emb_dim, up=False):
         super().__init__()
@@ -14,6 +21,7 @@ class Block(nn.Module):
             self.conv1 = nn.Conv2d(in_ch, out_ch, 3, padding=1)
             self.transform = nn.Conv2d(out_ch, out_ch, 4, 2, 1)
         self.conv2 = nn.Conv2d(out_ch, out_ch, 3, padding=1)
+        # BN 层保留是为了兼容已有 checkpoint；默认前向保持旧行为。
         self.bnorm1 = nn.BatchNorm2d(out_ch)
         self.bnorm2 = nn.BatchNorm2d(out_ch)
         self.relu = nn.ReLU()
@@ -48,24 +56,31 @@ class SinusoidalPositionEmbeddings(nn.Module):
         device = time.device
         half_dim = self.dim // 2
         embeddings = math.log(10000) / (half_dim - 1)
-        embeddings = torch.exp(torch.arange(half_dim, device=device) * -embeddings)
+        embeddings = torch.exp(
+            torch.arange(half_dim, device=device) * -embeddings
+        )
         embeddings = time[:, None] * embeddings[None, :]
         embeddings = torch.cat((embeddings.sin(), embeddings.cos()), dim=-1)
         return embeddings
 
 
 class SimpleUnet(nn.Module):
-    def __init__(self):
+    def __init__(
+        self,
+        image_channels=DEFAULT_IMAGE_CHANNELS,
+        down_channels=DEFAULT_DOWN_CHANNELS,
+        up_channels=DEFAULT_UP_CHANNELS,
+        out_dim=DEFAULT_OUT_DIM,
+        time_emb_dim=DEFAULT_TIME_EMB_DIM,
+    ):
         super().__init__()
-        image_channels = 3
-        down_channels = (64, 128, 256, 512, 1024)
-        up_channels = (1024, 512, 256, 128, 64)
-        out_dim = 3
-        time_emb_dim = 32
+        self._validate_channel_configuration(down_channels, up_channels)
 
         # Time embedding
         self.time_mlp = nn.Sequential(
-            SinusoidalPositionEmbeddings(time_emb_dim), nn.Linear(time_emb_dim, time_emb_dim), nn.ReLU()
+            SinusoidalPositionEmbeddings(time_emb_dim),
+            nn.Linear(time_emb_dim, time_emb_dim),
+            nn.ReLU(),
         )
 
         # Initial projection
@@ -73,17 +88,47 @@ class SimpleUnet(nn.Module):
 
         # Downsample
         self.downs = nn.ModuleList(
-            [Block(down_channels[i], down_channels[i + 1], time_emb_dim) for i in range(len(down_channels) - 1)]
+            [
+                Block(
+                    down_channels[i],
+                    down_channels[i + 1],
+                    time_emb_dim,
+                )
+                for i in range(len(down_channels) - 1)
+            ]
         )
         # Upsample
         self.ups = nn.ModuleList(
-            [Block(up_channels[i], up_channels[i + 1], time_emb_dim, up=True) for i in range(len(up_channels) - 1)]
+            [
+                Block(
+                    up_channels[i],
+                    up_channels[i + 1],
+                    time_emb_dim,
+                    up=True,
+                )
+                for i in range(len(up_channels) - 1)
+            ]
         )
 
         self.output = nn.Conv2d(up_channels[-1], out_dim, 1)
 
+    @staticmethod
+    def _validate_channel_configuration(down_channels, up_channels):
+        if len(down_channels) != len(up_channels):
+            raise ValueError(
+                "down_channels and up_channels must have the same length."
+            )
+        if down_channels[-1] != up_channels[0]:
+            raise ValueError(
+                "down_channels[-1] must match up_channels[0] "
+                "for the bottleneck."
+            )
+
+    def num_parameters(self):
+        return sum(parameter.numel() for parameter in self.parameters())
+
     def forward(self, x, timestep):
-        # Embedd time
+        # Embed time
         t = self.time_mlp(timestep)
         # Initial conv
         x = self.conv0(x)
@@ -102,7 +147,7 @@ class SimpleUnet(nn.Module):
 
 if __name__ == "__main__":
     model = SimpleUnet()
-    print("Num params: ", sum(p.numel() for p in model.parameters()))
+    print("Num params: ", model.num_parameters())
     print(model)
     img_size = 64
     device = "cpu"

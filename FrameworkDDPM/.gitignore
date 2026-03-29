@@ -1,0 +1,5 @@
+inpainting_batch/
+inpainting_masks/
+model/
+test/
+__pycache__/

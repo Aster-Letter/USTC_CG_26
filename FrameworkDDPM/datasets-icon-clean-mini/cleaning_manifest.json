@@ -1,0 +1,163 @@
+{
+  "input_dir": "E:\\Storage\\Homework\\Files\\CS\\Computer Graphics\\Repository\\USTC_CG_26\\FrameworkDDPM\\datasets-icon-clean",
+  "output_dir": "E:\\Storage\\Homework\\Files\\CS\\Computer Graphics\\Repository\\USTC_CG_26\\FrameworkDDPM\\datasets-icon-clean-layout-check",
+  "class_prefix": "cls",
+  "prefix": "icon",
+  "test_ratio": 0.2,
+  "seed": 3407,
+  "min_size": 32,
+  "source_count": 20,
+  "valid_unique_count": 20,
+  "invalid_count": 0,
+  "duplicate_count": 0,
+  "train_count": 16,
+  "test_count": 4,
+  "invalid_paths": [],
+  "duplicate_paths": [],
+  "train_outputs": [
+    "datasets-icon-clean-layout-check\\train\\cls0001\\icon_0001.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0002\\icon_0002.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0003\\icon_0003.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0004\\icon_0004.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0005\\icon_0005.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0006\\icon_0006.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0007\\icon_0007.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0008\\icon_0008.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0009\\icon_0009.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0010\\icon_0010.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0011\\icon_0011.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0012\\icon_0012.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0013\\icon_0013.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0014\\icon_0014.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0015\\icon_0015.jpg",
+    "datasets-icon-clean-layout-check\\train\\cls0016\\icon_0016.jpg"
+  ],
+  "test_outputs": [
+    "datasets-icon-clean-layout-check\\test\\cls0017\\icon_0017.jpg",
+    "datasets-icon-clean-layout-check\\test\\cls0018\\icon_0018.jpg",
+    "datasets-icon-clean-layout-check\\test\\cls0019\\icon_0019.jpg",
+    "datasets-icon-clean-layout-check\\test\\cls0020\\icon_0020.jpg"
+  ],
+  "records": [
+    {
+      "source_path": "datasets-icon-clean\\test\\cls0\\icon_0017.jpg",
+      "sha256": "99a86d58af3525a3c1d2ebb4daf48bd3fec4e757682dd1d1486164b3dfef2577",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\test\\cls0\\icon_0018.jpg",
+      "sha256": "34c153ffd591a380becd99a61f57efa541c3696361570624defe4781ad940c49",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\test\\cls0\\icon_0019.jpg",
+      "sha256": "d749ce50622eb529824a100e30c5ee086e962af2f3c97687342c29c70430fb02",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\test\\cls0\\icon_0020.jpg",
+      "sha256": "a803730210387fa0ae70c5c08f282c5bc57d74f7566b09363547d6e81896ac78",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0001.jpg",
+      "sha256": "845d2d78570be02aba2880184c48e7abc150f50096e041f1f871df1d0ac000e8",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0002.jpg",
+      "sha256": "cfe80ee4d48b719fc18deae779d7733d29ea2391c0c9afad289720a8510cf04e",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0003.jpg",
+      "sha256": "e354843613ebcaec1e6b94c439cff63dd0547dbefe3c91c17ee923b38b37f6f0",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0004.jpg",
+      "sha256": "493d66618fc8fd91c7b74be23245bb0b365538d6f7f2b29c397a5d5df5092738",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0005.jpg",
+      "sha256": "a03783f8244e349e669b10f6d70e96ab2375d07af4d87cf1830c35142f4fe566",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0006.jpg",
+      "sha256": "c383daec5b76e8a7e634ff558a76a4b253b631417563fe56dcb66ad7f9533c2a",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0007.jpg",
+      "sha256": "c9daabba40de6857a45d21788ecfaf3efdaf742a16354beffa7e1ab182e62ccc",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0008.jpg",
+      "sha256": "05a466888c50161320203e59f7c1d0e5552f409efe4bc3362b0be27c1a58d6dc",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0009.jpg",
+      "sha256": "32d604e155abf41182ece1ad98a4195197a608a9eda4a7908bbfa5be3764fbcc",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0010.jpg",
+      "sha256": "8f67f4970441bb43479aa9a2e6c514166f8d175c62f55e51f56319e189310cb7",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0011.jpg",
+      "sha256": "bfe06ed439ab04d856f4ddfb4f45aaea2bc9f12b0fe70351f1c498f34d77c0a2",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0012.jpg",
+      "sha256": "acac3e58fdd4f15413a878f0716604305688e1302a7720d833344e34fc83ae3f",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0013.jpg",
+      "sha256": "a98bc511a164771176b19e482fad5fd0dcc6dc887f010dc23f3f27f5322e0e36",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0014.jpg",
+      "sha256": "78d5b4a07ed7a1d9bd4fcdefeb98d05fa4196cdd78a96ab2c6794191b1f78aa9",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0015.jpg",
+      "sha256": "4240b9a9ec37d54c2a36b04aa934fd52c3229aa840edc8840fbef79c7187e2ae",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "source_path": "datasets-icon-clean\\train\\cls0\\icon_0016.jpg",
+      "sha256": "249810508857256dabbb83feee36c4ce3c06167ed7fa7c1a43c01fab34a3c4a9",
+      "width": 2048,
+      "height": 2048
+    }
+  ]
+}
