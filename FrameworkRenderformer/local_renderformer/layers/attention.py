@@ -181,7 +181,7 @@ class MultiHeadAttention(nn.Module):
             else:
                 attn_mask = None
 
-            # ====== HW8_TODO: Implement Scaled Dot-Product Attention ======
+            # ====== HW8_DONE: Scaled Dot-Product Attention ======
             # Given q, k, v of shape [B, H, N, D] with RoPE already applied,
             # and attn_mask of shape [B, H, 1, N] (True = valid, keep):
             #   1. Compute scores = q @ k^T / sqrt(D)
@@ -191,7 +191,15 @@ class MultiHeadAttention(nn.Module):
             #   5. Reshape: [B, H, N, D] → [B, N, H*D]
             # Hint: torch.matmul, torch.masked_fill, F.softmax
             # ==============================================================
-            raise NotImplementedError("HW8_TODO: Scaled Dot-Product Attention")
+            scale = q.size(-1) ** -0.5
+            scores = torch.matmul(q, k.transpose(-2, -1)) * scale
+            if attn_mask is not None:
+                # Codebase convention: True marks valid keys, so invalid
+                # columns are the logical inverse of the expanded mask.
+                scores = scores.masked_fill(~attn_mask, float("-inf"))
+            attn_weights = F.softmax(scores, dim=-1)
+            attn_output = torch.matmul(attn_weights, v)
+            attn_output = attn_output.transpose(1, 2).contiguous().view(bs, src_len, -1)
         elif ATTN == 'flash_attn':
             # self-attn
             if self.is_self_attn:
@@ -630,18 +638,19 @@ class TransformerEncoder(nn.Module):
         # src_key_padding_mask: (B, N), key padding mask, things you want to attend to is True
         if self.rope_dim is not None:
             assert triangle_pos is not None, "triangle_pos must be provided if rope_dim is not None"
-            # ====== HW8_TODO: Implement Relative Spatial P.E. (RoPE) ======
+            # ====== HW8_DONE: Relative Spatial P.E. (RoPE) ======
             # Compute rotary position embeddings from triangle vertex positions.
             #   1. Call self.rope_emb.get_triangle_freqs(triangle_pos)
             #   2. Convert frequencies to cos/sin via
             #      freqs_to_cos_sin(rope_freqs, head_dim=self.head_dim)
             #   3. Assign results to rope_cos, rope_sin
             # ==============================================================
-            raise NotImplementedError("HW8_TODO: RoPE Computation")
+            rope_freqs = self.rope_emb.get_triangle_freqs(triangle_pos)
+            rope_cos, rope_sin = freqs_to_cos_sin(rope_freqs, head_dim=self.head_dim)
         else:
             rope_cos = rope_sin = None
 
-        # ====== HW8_TODO: Implement Self-Attention Encoder Forward ======
+        # ====== HW8_DONE: Self-Attention Encoder Forward ======
         # Pass the sequence x through all encoder layers.
         #   - Each AttentionLayer expects query, kv, masks, and RoPE.
         #   - For self-attention, pass kv=None (or omit it).
@@ -649,7 +658,22 @@ class TransformerEncoder(nn.Module):
         #     are set, add a skip connection between those layers.
         # Return the processed sequence x.
         # ===============================================================
-        raise NotImplementedError("HW8_TODO: Self-Attention Encoder Forward")
+        skip_x = None
+        for layer_idx, layer in enumerate(self.layers, start=1):
+            if layer_idx == self.encoder_skip_from_layer:
+                skip_x = x
+
+            x = layer(
+                x,
+                src_key_padding_mask=src_key_padding_mask,
+                rope_cos=rope_cos,
+                rope_sin=rope_sin,
+            )
+
+            if layer_idx == self.encoder_skip_to_layer:
+                x = x + skip_x
+
+        return x
 
 
 class TransformerDecoder(nn.Module):
@@ -738,7 +762,7 @@ class TransformerDecoder(nn.Module):
     def forward(self, x, ctx, src_key_padding_mask=None, triangle_pos=None, ray_pos=None, out_layers=[], tf32_mode=False, patch_h=None, patch_w=None):
         if self.rope_dim is not None:
             assert triangle_pos is not None and ray_pos is not None, "triangle_pos and ray_pos must be provided if rope_dim is not None"
-            # ====== HW8_TODO: Implement RoPE for Rays and Triangles ======
+            # ====== HW8_DONE: RoPE for Rays and Triangles ======
             # Compute TWO SEPARATE rotary position embeddings:
             #   1. Query RoPE (for ray patches): from ray_pos via
             #      self.rope_emb.get_triangle_freqs(ray_pos)
@@ -748,13 +772,16 @@ class TransformerDecoder(nn.Module):
             # Assign to: rope_cos, rope_sin (ray) and
             #            rope_ctx_cos, rope_ctx_sin (triangle)
             # ============================================================
-            raise NotImplementedError("HW8_TODO: Decoder RoPE Computation")
+            ray_rope_freqs = self.rope_emb.get_triangle_freqs(ray_pos)
+            tri_rope_freqs = self.rope_emb.get_triangle_freqs(triangle_pos)
+            rope_cos, rope_sin = freqs_to_cos_sin(ray_rope_freqs, head_dim=self.head_dim)
+            rope_ctx_cos, rope_ctx_sin = freqs_to_cos_sin(tri_rope_freqs, head_dim=self.head_dim)
         else:
             rope_cos = rope_sin = rope_ctx_cos = rope_ctx_sin = None
 
         out_list = []
 
-        # ====== HW8_TODO: Implement Cross-Attention Decoder Forward ======
+        # ====== HW8_DONE: Cross-Attention Decoder Forward ======
         # Decode rendered features via cross-attention layers.
         #   - Each layer takes ray tokens (x) as query and triangle
         #     tokens (ctx) as key/value.
@@ -764,6 +791,20 @@ class TransformerDecoder(nn.Module):
         #     in a list: out_list.append([x]) — DPT expects this format.
         # Return x if no intermediates needed, else return the list.
         # ================================================================
-        raise NotImplementedError("HW8_TODO: Cross-Attention Decoder Forward")
+        for layer_idx, layer in enumerate(self.layers):
+            x = layer(
+                x,
+                ctx,
+                src_key_padding_mask=src_key_padding_mask,
+                rope_cos=rope_cos,
+                rope_sin=rope_sin,
+                rope_ctx_cos=rope_ctx_cos,
+                rope_ctx_sin=rope_ctx_sin,
+                force_sdpa=tf32_mode,
+                patch_h=patch_h,
+                patch_w=patch_w,
+            )
+            if layer_idx in out_layers:
+                out_list.append([x])
 
         return x if not out_list else out_list

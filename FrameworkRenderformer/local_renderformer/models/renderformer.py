@@ -139,6 +139,10 @@ class RenderFormer(nn.Module, PyTorchModelHubMixin):
 
         # vertex normal encoding
         if self.config.use_vn_encoder:
+            # The course wrapper passes normals as [B, N, 9]; keep this robust
+            # for callers that still use the geometric [B, N, 3, 3] layout.
+            if vns.dim() == 4:
+                vns = vns.reshape(vns.size(0), vns.size(1), -1)
             vn_emb = self.vn_encoder_norm(self.vn_encoding_proj(self.vn_pe(vns)))
         else:
             vn_emb = 0.
@@ -148,7 +152,7 @@ class RenderFormer(nn.Module, PyTorchModelHubMixin):
             texture_patch_list.reshape(texture_patch_list.size(0), texture_patch_list.size(1), -1)
         ))
 
-        # ====== HW8_TODO: Implement Triangle Embedding ======
+        # ====== HW8_DONE: Triangle Embedding ======
         # Build the transformer input sequence:
         #   1. Start with learnable register tokens (self.reg_tokens).
         #   2. For each triangle, combine its positional encoding
@@ -158,7 +162,21 @@ class RenderFormer(nn.Module, PyTorchModelHubMixin):
         #      Different pe_type ('nerf' vs 'rope') require different treatment.
         #   3. Concatenate all tokens into the final sequence.
         # ====================================================
-        raise NotImplementedError("HW8_TODO: Triangle Embedding")
+        reg_tokens = self.reg_tokens.expand(batch_size, -1, -1)
+
+        if self.config.pe_type == 'nerf':
+            tri_pos_emb = self.tri_encoding_norm(
+                self.tri_encoding_proj(self.tri_vpos_pe(tri_vpos_list))
+            )
+            tri_tokens = tri_pos_emb + tri_tex_emb + vn_emb + self.tri_token
+        elif self.config.pe_type == 'rope':
+            # With RoPE, absolute triangle positions are kept out of the token
+            # features and are injected later by rotating q/k in attention.
+            tri_tokens = tri_tex_emb + vn_emb + self.tri_token
+        else:
+            raise ValueError(f"Invalid positional encoding type: {self.config.pe_type}")
+
+        seq = torch.cat([reg_tokens, tri_tokens], dim=1)
 
         # pad triangle pos (for RoPE) and valid mask (for all)
         # use center pos for RoPE on auxiliary tokens

@@ -100,7 +100,7 @@ class ViewTransformer(nn.Module):
             decoded_img: (B, 3, H, W)
         """
 
-        # ====== HW8_TODO: Implement Ray Bundle Embedding ======
+        # ====== HW8_DONE: Ray Bundle Embedding ======
         # Encode the ray direction map into query patch tokens:
         #   1. Apply NeRF PE to rays via self.vdir_pe.
         #   2. Reshape into non-overlapping patches via einops-like
@@ -115,7 +115,39 @@ class ViewTransformer(nn.Module):
         # Variables you must define (used downstream):
         #   ray_tokens, patch_h, patch_w, ray_token_pos
         # =====================================================
-        raise NotImplementedError("HW8_TODO: Ray Bundle Embedding")
+        batch_size, height, width, _ = ray_map.shape
+        patch_size = self.config.patch_size
+        if height % patch_size != 0 or width % patch_size != 0:
+            raise ValueError(
+                f"Ray map resolution {(height, width)} must be divisible by patch_size={patch_size}."
+            )
+
+        patch_h = height // patch_size
+        patch_w = width // patch_size
+        num_patches = patch_h * patch_w
+
+        ray_encoding = self.vdir_pe(ray_map)
+        ray_patches = rearrange(
+            ray_encoding,
+            'b (h1 p1) (w1 p2) c -> b (h1 w1) (c p1 p2)',
+            p1=patch_size,
+            p2=patch_size,
+        )
+        ray_tokens = self.ray_map_encoder_norm(self.ray_map_encoder(ray_patches))
+        ray_tokens = ray_tokens + self.ray_map_patch_token
+
+        # Triangle RoPE uses three vertices (9 scalars). A ray patch has one
+        # camera origin, so repeat the origin three times to reuse that path.
+        ray_token_pos = camera_o[:, None, :].expand(batch_size, num_patches, 3)
+        ray_token_pos = ray_token_pos.repeat(1, 1, 3)
+
+        if self.config.pe_type == 'nerf':
+            ray_tokens = ray_tokens + self.token_pos_pe_norm(
+                self.pe_token_proj(self.pos_pe(ray_token_pos))
+            )
+            tri_tokens = tri_tokens + self.token_pos_pe_norm(
+                self.pe_token_proj(self.pos_pe(tri_pos))
+            )
 
         # do per-ray attention
         if self.config.use_dpt_decoder:
