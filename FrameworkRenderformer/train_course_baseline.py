@@ -18,7 +18,8 @@ import torch.nn.utils as nn_utils
 from torch.utils.data import DataLoader
 
 
-os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+if os.name != "nt":
+    os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
@@ -53,6 +54,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--image_size", type=int, default=64, help="Only used for H5 data.")
     parser.add_argument("--save_every", type=int, default=500)
     parser.add_argument("--vis_every", type=int, default=200)
+    parser.add_argument("--initial_vis_steps", type=int, default=0, help="Also save previews for the first N steps.")
     parser.add_argument("--log_every", type=int, default=20)
     parser.add_argument("--resume_from", type=str, default=None)
 
@@ -158,6 +160,11 @@ def save_json(save_path: Path, content: Dict[str, Any]) -> None:
         json.dump(content, file, indent=2, ensure_ascii=True)
 
 
+def append_jsonl(save_path: Path, content: Dict[str, Any]) -> None:
+    with save_path.open("a", encoding="utf-8") as file:
+        file.write(json.dumps(content, ensure_ascii=True) + "\n")
+
+
 def next_batch(data_iterator, dataloader):
     try:
         batch = next(data_iterator)
@@ -224,10 +231,13 @@ def main() -> None:
     out_dir = Path(args.out_dir)
     ckpt_dir = out_dir / "checkpoints"
     vis_dir = out_dir / "vis"
+    metrics_path = out_dir / "metrics.jsonl"
     out_dir.mkdir(parents=True, exist_ok=True)
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     vis_dir.mkdir(parents=True, exist_ok=True)
     save_json(out_dir / "args.json", vars(args))
+    if not args.resume_from and metrics_path.exists():
+        metrics_path.unlink()
 
     device = pick_device(args.device)
     amp_dtype, use_grad_scaler = resolve_amp_mode(device, args.amp)
@@ -274,7 +284,8 @@ def main() -> None:
         lpips_weight=args.lpips_weight,
         device=str(device),
     )
-    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda" and use_grad_scaler))
+    scaler_device = "cuda" if device.type == "cuda" else "cpu"
+    scaler = torch.amp.GradScaler(scaler_device, enabled=(device.type == "cuda" and use_grad_scaler))
 
     start_step = maybe_load_checkpoint(args.resume_from, model, optimizer, scheduler, device)
 
@@ -366,7 +377,22 @@ def main() -> None:
                 f"peak_mem={peak_memory:.2f}GB"
             )
 
-        if latest_prediction is not None and (global_step % args.vis_every == 0 or global_step <= 30):
+        metrics_record = {
+            "step": global_step,
+            "total_loss": step_metrics["total_loss"],
+            "base_loss": step_metrics["base_loss"],
+            "lpips_loss": step_metrics["lpips_loss"],
+            "lr": optimizer.param_groups[0]["lr"],
+        }
+        if device.type == "cuda":
+            metrics_record["peak_mem_gb"] = torch.cuda.max_memory_allocated(device) / (1024 ** 3)
+        append_jsonl(metrics_path, metrics_record)
+
+        should_save_preview = (
+            global_step % args.vis_every == 0
+            or global_step <= args.initial_vis_steps
+        )
+        if latest_prediction is not None and should_save_preview:
             save_preview(latest_prediction, latest_target, vis_dir / f"step_{global_step:05d}.png")
 
         if global_step % args.save_every == 0:
@@ -375,6 +401,15 @@ def main() -> None:
 
     save_checkpoint(ckpt_dir / "final.pt", global_step, args, model, optimizer, scheduler)
     save_checkpoint(ckpt_dir / "last.pt", global_step, args, model, optimizer, scheduler)
+    save_json(
+        out_dir / "train_summary.json",
+        {
+            "final_step": global_step,
+            "elapsed_seconds": time.time() - start_time,
+            "metrics_file": str(metrics_path.name),
+            "last_checkpoint": str((ckpt_dir / "last.pt").name),
+        },
+    )
     print(f"Training finished in {time.time() - start_time:.1f}s")
 
 

@@ -84,6 +84,91 @@ python train_course_baseline.py --dataset_format pt \
     --max_steps 30000 ...   # total target steps, NOT additional steps
 ```
 
+## Formal Workflow for HW8
+
+The homework requires a reportable PSNR result, so a complete run should include three stages: train, evaluate, and curate figures.
+
+### Stage 1: Formal Training Run
+
+Recommended command for the final result run:
+
+```bash
+python train_course_baseline.py --dataset_format pt \
+    --data_path datasets/pt_dataset_teapot_v2 \
+    --out_dir runs/hw8_formal_dpt \
+    --max_steps 30000 --batch_size 4 \
+    --latent_dim 256 --num_layers 4 --num_heads 4 \
+    --view_layers 6 --view_num_heads 4 \
+    --patch_size 8 --texture_patch_size 1 \
+    --use_dpt_decoder \
+    --log_every 50 --vis_every 500 --save_every 5000 \
+    --workers 0 --device cuda
+```
+
+Artifacts produced by the trainer:
+
+- `args.json`: frozen run configuration
+- `metrics.jsonl`: one JSON record per training step, suitable for plotting loss curves
+- `train_summary.json`: run summary and final checkpoint pointer
+- `checkpoints/*.pt`: periodic and final checkpoints
+- `vis/*.png`: side-by-side GT/pred previews
+
+### Stage 2: Checkpoint Evaluation and PSNR
+
+Use the new evaluation script on the final or best checkpoint:
+
+```bash
+python evaluate_course_baseline.py \
+    --checkpoint runs/hw8_formal_dpt/checkpoints/final.pt \
+    --out_dir runs/hw8_formal_dpt_eval \
+    --device cuda --batch_size 1 --workers 0 --save_images 16
+```
+
+Evaluation outputs:
+
+- `summary.json`: aggregated metrics over the evaluated set
+- `per_sample_metrics.jsonl`: per-view PSNR / MSE records
+- `vis/*.png`: saved GT-vs-pred comparison figures
+
+The summary contains two PSNR variants:
+
+- `mean_psnr_clamped`: PSNR after clamping predictions and GT to `[0, 1]`; this is the recommended report-facing metric.
+- `mean_psnr_display`: PSNR after clamp + gamma conversion; useful as a supplementary perceptual metric.
+
+### Stage 3: Report Figure Curation
+
+For the report, collect at least the following evidence from the training and evaluation output folders:
+
+1. Loss curve drawn from `metrics.jsonl`
+2. Final PSNR from `summary.json`
+3. Several `vis/*.png` comparisons covering both successful and weak views
+4. The exact command line in `args.json` or your terminal log
+
+### Stage 4: Draw the Loss Curve
+
+The course baseline now includes a small plotting utility that reads `metrics.jsonl` and exports a PNG curve without requiring matplotlib:
+
+```bash
+python plot_training_metrics.py \
+    --metrics runs/hw8_formal_dpt/metrics.jsonl \
+    --out runs/hw8_formal_dpt/loss_curve.png \
+    --title "HW8 Formal Training Loss"
+```
+
+Default plotted curves:
+
+1. `total_loss`
+2. `base_loss`
+
+If you only want one metric in the figure:
+
+```bash
+python plot_training_metrics.py \
+    --metrics runs/hw8_formal_dpt/metrics.jsonl \
+    --out runs/hw8_formal_dpt/base_loss_curve.png \
+    --fields base_loss
+```
+
 ## Parameter Reference
 
 All command-line arguments for `train_course_baseline.py`, grouped by category.
@@ -126,6 +211,7 @@ All command-line arguments for `train_course_baseline.py`, grouped by category.
 | `--out_dir` | str | `.../runs/default` | Output directory. |
 | `--log_every` | int | 20 | Print log every N steps. |
 | `--vis_every` | int | 200 | Save GT/prediction visualization every N steps. |
+| `--initial_vis_steps` | int | 0 | Additionally save previews for the first N steps. Set to `0` to disable warm-up previews. |
 | `--save_every` | int | 500 | Save checkpoint every N steps. |
 
 ### Model Architecture
