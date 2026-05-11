@@ -27,6 +27,7 @@ def build_baseline_config(
     vn_pe_num_freqs: int = 6,
     use_vn_encoder: bool = True,
     ffn_opt: str = "checkpoint",
+    norm_type: str = "rms_norm",
 ) -> RenderFormerConfig:
     if vertex_pe_num_freqs < 4:
         raise ValueError("vertex_pe_num_freqs must be at least 4 for a safe RoPE setup.")
@@ -80,6 +81,9 @@ def build_baseline_config(
         turn_to_cam_coord=True,
         use_ldr=False,
         ffn_opt=ffn_opt,
+        norm_type=norm_type,
+        vn_encoder_norm_type=norm_type,
+        texture_encoder_norm_type=norm_type,
     )
 
 

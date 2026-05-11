@@ -182,23 +182,18 @@ class MultiHeadAttention(nn.Module):
                 attn_mask = None
 
             # ====== HW8_DONE: Scaled Dot-Product Attention ======
-            # Given q, k, v of shape [B, H, N, D] with RoPE already applied,
-            # and attn_mask of shape [B, H, 1, N] (True = valid, keep):
-            #   1. Compute scores = q @ k^T / sqrt(D)
-            #   2. Apply mask: set masked positions to -inf (note: invert mask!)
-            #   3. Softmax: attn_weights = F.softmax(scores, dim=-1)
-            #   4. Weighted sum: attn_output = attn_weights @ v
-            #   5. Reshape: [B, H, N, D] → [B, N, H*D]
-            # Hint: torch.matmul, torch.masked_fill, F.softmax
+            # q/k/v are [B, H, N, D]. PyTorch SDPA implements
+            # softmax(q k^T / sqrt(D)) v with the same mask convention used in
+            # this file: bool True means the key is valid/kept. Using the fused
+            # backend avoids materializing the huge encoder [N_tri, N_tri]
+            # attention matrix in Python.
             # ==============================================================
-            scale = q.size(-1) ** -0.5
-            scores = torch.matmul(q, k.transpose(-2, -1)) * scale
-            if attn_mask is not None:
-                # Codebase convention: True marks valid keys, so invalid
-                # columns are the logical inverse of the expanded mask.
-                scores = scores.masked_fill(~attn_mask, float("-inf"))
-            attn_weights = F.softmax(scores, dim=-1)
-            attn_output = torch.matmul(attn_weights, v)
+            attn_output = F.scaled_dot_product_attention(
+                query=q.type(v.dtype),
+                key=k.type(v.dtype),
+                value=v,
+                attn_mask=attn_mask,
+            )
             attn_output = attn_output.transpose(1, 2).contiguous().view(bs, src_len, -1)
         elif ATTN == 'flash_attn':
             # self-attn

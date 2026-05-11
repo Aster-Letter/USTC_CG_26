@@ -231,12 +231,13 @@ All command-line arguments for `train_course_baseline.py`, grouped by category.
 | `--vn_pe_num_freqs` | int | 6 | Vertex normal encoding frequencies. |
 | `--no_vn` | flag | False | Disable vertex normal encoder. |
 | `--ffn_opt` | `checkpoint`/`none` | `checkpoint` | FFN optimization. `checkpoint` saves memory. |
+| `--norm_type` | `rms_norm`/`layer_norm` | `rms_norm` | Transformer normalization. `layer_norm` may be slightly faster on fp16 Windows/CUDA runs, but changes the architecture and should be treated as a new experiment. |
 
 ### Loss
 
 | Argument | Type | Default | Description |
 |----------|------|---------|-------------|
-| `--loss_type` | `log_l1`/`l1`/`mse` | `log_l1` | Loss function type. |
+| `--loss_type` | `balanced_log_l1`/`log_l1`/`l1`/`mse` | `balanced_log_l1` | Loss function type. `balanced_log_l1` upweights bright/visible regions and is recommended for avoiding black-output collapse on HDR data. |
 | `--use_lpips` | flag | False | Enable LPIPS perceptual loss (increases VRAM). |
 | `--lpips_weight` | float | 0.05 | LPIPS loss weight. |
 

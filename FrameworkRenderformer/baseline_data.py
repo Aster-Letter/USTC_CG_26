@@ -40,7 +40,7 @@ def _resolve_pt_directory(data_path: str | Path) -> Path:
 class PtSceneDataset(Dataset):
     """Loads pre-generated .pt samples from disk."""
 
-    def __init__(self, data_path: str | Path, max_items: Optional[int] = None):
+    def __init__(self, data_path: str | Path, max_items: Optional[int] = None, cache_in_memory: bool = True):
         self.data_dir = _resolve_pt_directory(data_path)
         self.files = sorted(self.data_dir.glob("*.pt"))
         if max_items is not None:
@@ -48,11 +48,16 @@ class PtSceneDataset(Dataset):
 
         if not self.files:
             raise FileNotFoundError(f"No .pt files found in {self.data_dir}")
+        self.cache_in_memory = cache_in_memory
+        self._cache: Dict[int, Dict[str, Any]] = {}
 
     def __len__(self) -> int:
         return len(self.files)
 
     def __getitem__(self, index: int) -> Dict[str, Any]:
+        if self.cache_in_memory and index in self._cache:
+            return self._cache[index]
+
         path = self.files[index]
         try:
             sample = torch.load(path, map_location="cpu", weights_only=False)
@@ -64,6 +69,8 @@ class PtSceneDataset(Dataset):
 
         sample["sample_name"] = sample.get("sample_name", path.name)
         sample["sample_idx"] = sample.get("sample_idx", index)
+        if self.cache_in_memory:
+            self._cache[index] = sample
         return sample
 
 

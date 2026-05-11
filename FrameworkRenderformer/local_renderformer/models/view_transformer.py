@@ -1,11 +1,30 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from .config import RenderFormerConfig
 from ..encodings.nerf_encoding import NeRFEncoding
 from ..layers.attention import TransformerDecoder
 from ..layers.dpt import DPTHead
 from ..compat_einops import rearrange
+
+
+class PositiveRadianceActivation(nn.Module):
+    """Map unconstrained decoder logits to non-negative linear RGB/radiance.
+
+    The loss and preview code both clamp negative predictions to zero. If the
+    model is allowed to emit negative RGB, those pixels can become a black
+    zero-gradient basin. Softplus keeps the output positive while preserving a
+    useful gradient for moderately negative logits.
+    """
+
+    def __init__(self, shift: float = 1.0, eps: float = 1e-6):
+        super().__init__()
+        self.shift = shift
+        self.eps = eps
+
+    def forward(self, x):
+        return F.softplus(x - self.shift) + self.eps
 
 
 class ViewTransformer(nn.Module):
@@ -83,7 +102,7 @@ class ViewTransformer(nn.Module):
                 out_dim=4 if config.include_alpha else 3
             )
             self.out_layers = list(range(self.config.view_transformer_n_layers - 4, self.config.view_transformer_n_layers)) if self.config.dpt_out_layers is None else self.config.dpt_out_layers
-        self.out_proj_act = nn.ELU(alpha=1e-3)
+        self.out_proj_act = PositiveRadianceActivation()
 
     def forward(self, camera_o, ray_map, tri_tokens, tri_pos, valid_mask, tf32_mode=False):
         """
@@ -151,8 +170,10 @@ class ViewTransformer(nn.Module):
 
         # do per-ray attention
         if self.config.use_dpt_decoder:
-            with torch.autocast(device_type="cuda", dtype=torch.float32 if tf32_mode else torch.bfloat16):
-                out_features = self.transformer(ray_tokens, tri_tokens, src_key_padding_mask=valid_mask, triangle_pos=tri_pos, ray_pos=ray_token_pos, out_layers=self.out_layers, tf32_mode=tf32_mode, patch_h=patch_h, patch_w=patch_w)
+            # Precision is controlled by the training/evaluation autocast
+            # context. Keeping it out of the model avoids silently mixing
+            # bf16 with fp16/float32 runs.
+            out_features = self.transformer(ray_tokens, tri_tokens, src_key_padding_mask=valid_mask, triangle_pos=tri_pos, ray_pos=ray_token_pos, out_layers=self.out_layers, tf32_mode=tf32_mode, patch_h=patch_h, patch_w=patch_w)
             decoded_img = self.out_dpt(out_features, patch_h, patch_w, patch_size=self.config.patch_size)
             return self.out_proj_act(decoded_img)
         else:

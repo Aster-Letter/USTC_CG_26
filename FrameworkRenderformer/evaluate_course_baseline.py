@@ -123,6 +123,7 @@ def main() -> None:
         vn_pe_num_freqs=int(checkpoint_args.get("vn_pe_num_freqs", 6)),
         use_vn_encoder=not bool(checkpoint_args.get("no_vn", False)),
         ffn_opt=str(checkpoint_args.get("ffn_opt", "checkpoint")),
+        norm_type=str(checkpoint_args.get("norm_type", "rms_norm")),
     )
     model = CourseRenderFormerWrapper(config).to(device)
     model.load_state_dict(checkpoint["model_state_dict"])

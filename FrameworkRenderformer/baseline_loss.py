@@ -11,13 +11,15 @@ class SimpleRenderFormerLoss(nn.Module):
     """
     A lighter training loss for course use.
 
-    By default it only uses log-L1, which is much cheaper than the original
-    LPIPS-based loss and is friendlier to low-VRAM GPUs.
+    The default balanced log-L1 keeps the cheap log-radiance objective, but
+    upweights bright/visible regions. A plain unweighted log-L1 lets a black
+    image score surprisingly well on this HDR dataset, which can pull the
+    decoder into a near-black local optimum.
     """
 
     def __init__(
         self,
-        loss_type: str = "log_l1",
+        loss_type: str = "balanced_log_l1",
         use_lpips: bool = False,
         lpips_weight: float = 0.05,
         device: str = "cpu",
@@ -46,7 +48,26 @@ class SimpleRenderFormerLoss(nn.Module):
 
     @staticmethod
     def _tone_map(image: torch.Tensor) -> torch.Tensor:
-        return torch.clamp(torch.log2(torch.clamp(image, min=1e-6)), 0.0, 1.0)
+        return torch.pow(torch.clamp(image, 0.0, 1.0), 1.0 / 2.2)
+
+    def _balanced_log_l1(self, prediction: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        pred_log = self._log_transform(prediction)
+        target_log = self._log_transform(target)
+
+        # Use log-luminance as a stable visibility proxy. The weight map is
+        # normalized per image, so scenes with different exposure do not change
+        # the global loss scale too much.
+        target_log_luma = target_log.mean(dim=1, keepdim=True)
+        mean_luma = target_log_luma.mean(dim=(1, 2, 3), keepdim=True).clamp_min(1e-4)
+        weight = 1.0 + 3.0 * torch.clamp(target_log_luma / mean_luma, max=4.0)
+        weight = weight.expand_as(pred_log)
+        weighted_log_l1 = (torch.abs(pred_log - target_log) * weight).sum() / weight.sum().clamp_min(1e-6)
+
+        # These small auxiliary terms align optimization with the report-facing
+        # clamped/display metrics and make the all-black solution expensive.
+        clamped_l1 = F.l1_loss(torch.clamp(prediction, 0.0, 1.0), torch.clamp(target, 0.0, 1.0))
+        display_l1 = F.l1_loss(self._tone_map(prediction), self._tone_map(target))
+        return weighted_log_l1 + 0.25 * clamped_l1 + 0.25 * display_l1
 
     def forward(self, prediction: torch.Tensor, target: torch.Tensor) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         if self.loss_type == "mse":
@@ -55,6 +76,8 @@ class SimpleRenderFormerLoss(nn.Module):
             base_loss = F.l1_loss(prediction, target)
         elif self.loss_type == "log_l1":
             base_loss = torch.mean(torch.abs(self._log_transform(prediction) - self._log_transform(target)))
+        elif self.loss_type == "balanced_log_l1":
+            base_loss = self._balanced_log_l1(prediction, target)
         else:
             raise ValueError(f"Unsupported loss_type: {self.loss_type}")
 

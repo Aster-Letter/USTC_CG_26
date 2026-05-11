@@ -48,6 +48,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--grad_clip", type=float, default=1.0)
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument("--max_items", type=int, default=None, help="Optional cap on PT samples for debugging.")
+    parser.add_argument("--no_cache_pt_data", action="store_true", help="Disable in-memory caching for PT samples.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", choices=["auto", "cuda", "cpu"], default="auto")
     parser.add_argument("--amp", choices=["auto", "bf16", "fp16", "none"], default="auto")
@@ -71,8 +72,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--vn_pe_num_freqs", type=int, default=6)
     parser.add_argument("--no_vn", action="store_true")
     parser.add_argument("--ffn_opt", choices=["checkpoint", "none"], default="checkpoint")
+    parser.add_argument("--norm_type", choices=["rms_norm", "layer_norm"], default="rms_norm")
 
-    parser.add_argument("--loss_type", choices=["log_l1", "l1", "mse"], default="log_l1")
+    parser.add_argument("--loss_type", choices=["balanced_log_l1", "log_l1", "l1", "mse"], default="balanced_log_l1")
     parser.add_argument("--use_lpips", action="store_true")
     parser.add_argument("--lpips_weight", type=float, default=0.05)
 
@@ -123,7 +125,11 @@ def move_to_device(value: Any, device: torch.device) -> Any:
 
 def build_dataset(args: argparse.Namespace):
     if args.dataset_format == "pt":
-        return PtSceneDataset(args.data_path, max_items=args.max_items)
+        return PtSceneDataset(
+            args.data_path,
+            max_items=args.max_items,
+            cache_in_memory=not getattr(args, "no_cache_pt_data", False),
+        )
     return H5TriangleDataset(args.data_path, render_resolution=args.image_size)
 
 
@@ -273,6 +279,7 @@ def main() -> None:
         vn_pe_num_freqs=args.vn_pe_num_freqs,
         use_vn_encoder=not args.no_vn,
         ffn_opt=args.ffn_opt,
+        norm_type=args.norm_type,
     )
     model = CourseRenderFormerWrapper(config).to(device)
 
@@ -384,6 +391,19 @@ def main() -> None:
             "lpips_loss": step_metrics["lpips_loss"],
             "lr": optimizer.param_groups[0]["lr"],
         }
+        if latest_prediction is not None and latest_target is not None:
+            pred_for_stats = latest_prediction.detach().to(dtype=torch.float32)
+            target_for_stats = latest_target.detach().to(dtype=torch.float32)
+            metrics_record.update(
+                {
+                    "pred_min": float(pred_for_stats.min().item()),
+                    "pred_mean": float(pred_for_stats.mean().item()),
+                    "pred_max": float(pred_for_stats.max().item()),
+                    "pred_nonpositive_frac": float((pred_for_stats <= 0).float().mean().item()),
+                    "target_mean": float(target_for_stats.mean().item()),
+                    "target_max": float(target_for_stats.max().item()),
+                }
+            )
         if device.type == "cuda":
             metrics_record["peak_mem_gb"] = torch.cuda.max_memory_allocated(device) / (1024 ** 3)
         append_jsonl(metrics_path, metrics_record)
