@@ -1,16 +1,33 @@
+# build
 build/
 build_clanguml/
 build_clanguml_j/
+-
+# IDE
+.vscode
+
+# Visual Studio & Compilers
 bin/
 libs/
-.vscode
-imgui.ini
-.DS_Store
 .vs
-*.zip
-sync_logs/
-docs-agent/
+
+# Local
 report/
+
+# Framework
 /Framework3D
 Framework3D/Ruzino
 FrameworkRenderformer/runs/
+
+# others
+imgui.ini
+.DS_Store
+*.zip
+
+# Agents
+AGENTS.md
+CLAUDE.md
+.agents/
+
+docs-agent/*
+
