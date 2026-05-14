@@ -27,21 +27,14 @@
 ## 2. 如何运动？
 
 ### 2.1. 一个基本的运动效果
-如果正常配置成功框架（和 HW4-6 一样，要复制一份 [assignments](../../../Framework3D/submissions/assignments/) 文件夹并修改成自己的名字）,那么按照以下步骤就可以实现一个基本的运动效果。
 
-- Step 1: 运行 **USTC_CG_test** 项目（注意不是 polyscope）；
-- Step 2: 新建一个 mesh0，使用 `read_usd` 节点导入网格文件，直接连接到 `write_usd` 节点上可视化以确保导入成功。我们提供的网格文件在 [data/](../data/) 文件夹下。在导入这个 grid1x1.usda 文件之后，因为角度关系，可能需要调整视角（Q\E上下移动相机）才能看到场景中的物体。我们也提供了更高分辨率的网格。
-- Step 3: 连接图中的其他节点，注意本次作业我们引入了两个新的结构：
-  - 进度条：渲染窗口的底部是仿真的时间条，选中渲染窗口后单击空格进度条会增长，再单击空格停止（进度条的更新时间间隔在程序中设置，默认是 $1/30$ 秒一帧）；
-  - 仿真节点 `simulation_in`/`simulation_out`，这两个节点是成对出现的，我们可以给 `simulation_in` 传入任意的类型来获取一样的输出。在单击空格之后，这两个节点中间的部分会在仿真执行的每一帧都重复计算。也可以尝试在其中插入 `transform_geom` 等节点尝试不同的运动效果。
-     <div  align="center">    
-     <img src="../images/get_start.png" style="zoom:30%" />
-     </div>
-- Step4: 我们主要将实现的节点是中间的 `mass_spring` 节点。默认状态下，直接单击空格，物体会沿一个方向做匀速运动。我们要把它改成弹簧质点系统下的仿真。
+参考下图链接节点，可得到一个简单的运动动画
+
+<img src="images/README/2026-05-13-10-48-13-image.png" title="" alt="" data-align="center">
 
 ### 2.2. 如何实现质点弹簧系统的运动？
-为了让这些离散点动起来，我们需要做时间上的离散:
 
+为了让这些离散点动起来，我们需要做时间上的离散:
 
 假设我们有n个顶点，将所有顶点拼成一个矩阵 $\mathbf{x} \in \mathbb{R}^{3n\times 1}$，
 
@@ -90,8 +83,7 @@ $$
 \nabla E = \sum_i k (\|\mathbf{x}_i\| - L)\frac{\mathbf{x}_i}{\|\mathbf{x}_i\|} \quad(3)
 $$
 
-只要在`MassSpring.cpp`（(在文件夹[`Framework3D\submissions\assignments\mass_spring\`](../../../Framework3D/submissions/assignments/mass_spring/)中)的 `computeGrad` 函数中填上这一部分梯度的计算:
-
+只要在`MassSpring.cpp` 的 `computeGrad` 函数中填上这一部分梯度的计算:
 
 ```C++
 Eigen::MatrixXd MassSpring::computeGrad(double stiffness)
@@ -101,12 +93,13 @@ Eigen::MatrixXd MassSpring::computeGrad(double stiffness)
     {
         // --------------------------------------------------
         // HW_TODO: Implement the gradient computation
-        
+
         // --------------------------------------------------
     }
     return g; 
 }
 ```
+
 和`step`函数中半隐式时间积分的公式:
 
 ```C++
@@ -125,6 +118,7 @@ else if(time_integrator == SEMI_IMPLICIT_EULER)
 最后可以为速度乘上阻尼系数 `vel *= damping` 来模拟阻尼。这样就可以完成作业的第一部分了。
 
 这里我们需要固定一些点（狄利克雷边界条件）。在MassSpring这个类中我们提供了`dirichlet_bc_mask`这个bool数组来表示一个顶点是否固定，如在初始化的时候：
+
 ```C++
 dirichlet_bc_mask.resize(X.rows(), false);
 unsigned n_fix = sqrt(X.rows()); // number of fixed vertices, here we assume this is a square cloth 
@@ -133,6 +127,7 @@ unsigned n_fix = sqrt(X.rows()); // number of fixed vertices, here we assume thi
 dirichlet_bc_mask[0] = true;
 dirichlet_bc_mask[n_fix - 1] = true;
 ```
+
 然后，直接将这些固定点的外力和速度设置为0就可以。
 
 如果正确实现了上面的步骤，并且将1. 劲度系数`stiffness`、2.时间步长`h`、3. 阻尼系数`damping`设置为一个合理的值后（需要手动调观察效果, `stiffness`越大则时间步长`h`就需要越小，如尝试`stiffness` = 10, `h` = 0.001, `damping`=0.995），在`grid20x20`的mesh上可以得到类似下图的结果：
@@ -152,24 +147,18 @@ dirichlet_bc_mask[n_fix - 1] = true;
 > [!Note]
 > 参数含义都比较直观，可以阅读代码了解。
 
-<div  align="center">    
- <img src="../images/nodes0.png" style="zoom:80%"/>
-</div>
 
 
 > [!Note]
 > 本次作业为了几何表示的方便，我们没有使用交叉型的网格表示弹簧质点系统（如下所示），只使用了三角网格。交叉型网格能够考虑更多布料在弯曲时的约束，如果你有兴趣，也可以在程序中加入这些额外的边连接，并比较它和三角网格的仿真效果的区别。
+> 
 > <div  align="center">    
 > <img src="../images/cross_mesh.png" style="zoom:40%"/>
 > </div>
-> 
->
 
+## 4. 艺术就是......爆炸！
 
-
-## 4. 艺术就是......爆炸！ 
 但当我们实现了上面的半隐式时间积分后，会发现在时间步调大时，发生爆炸, 如下所示。
-
 
 <div  align="center">    
  <img src="../images/semi-implicit-explode.gif" style="zoom:80%" />
@@ -183,7 +172,6 @@ dirichlet_bc_mask[n_fix - 1] = true;
 
 > 爆炸的原因与不同时间积分方法的稳定性有关系。
 > 如果想了解从几何的角度去解释显式欧拉积分、半隐式欧拉积分（又名辛欧拉积分，与辛几何有关系）与隐式欧拉积分的稳定性，请阅读[Discrete Geometric Mechanics for Variational Time Integrators](http://www.geometry.caltech.edu/pubs/SD06.pdf)
-> 
 
 接下来我们需要实现隐式欧拉积分：
 
@@ -229,11 +217,10 @@ $$
 \nabla g(\mathbf{x}) = \frac{1}{h^2} \mathbf{M}(\mathbf{x} - \mathbf{y}) + \nabla E(\mathbf{x})
 $$
 
-
 为了求解优化问题，我们可以使用梯度下降，但是其收敛速度比较慢（线性收敛速度）。在图形学中，更加常用的做法是使用牛顿法：
 
 $$
- \mathbf{x}^{n+1} = \mathbf{x}^n - (\nabla^2 g)^{-1} \nabla \mathbf{g} 
+\mathbf{x}^{n+1} = \mathbf{x}^n - (\nabla^2 g)^{-1} \nabla \mathbf{g} 
 $$
 
 那么需要求能量 $g$ 的Hessian矩阵 $\nabla^2 g$ 。
@@ -252,7 +239,6 @@ $$
 <div  align="center">    
  <img src="../images/hessian_assemble.png" style="zoom:40%"/>
 </div>
-
 
 最后我们写出 $g$ 的Hessian：
 
@@ -276,7 +262,7 @@ $$
 在最优化中，求解一个优化问题可能需要迭代多次，直到收敛（ $\|\nabla g\|$ 小于阈值 ），我们这里出于效率考虑，在一个时间步内只进行一次牛顿法的迭代，你也可以尝试在一个时间步内让牛顿法迭代多次直到收敛，并比较两种做法的仿真结果。
 
 > 这里其实还涉及到一个Line Search的部分，一般基于线搜索方法优化问题的流程：1. 先确定搜索方向 $\mathbf{p}$（我们这里 $\mathbf{p} = (\nabla^2 g)^{-1}\mathbf{\nabla}g$ ），2. 然后确定要前进的步长 $\alpha$（该步骤称为Line Search），3. 最后更新 $\mathbf{x}^{n+1} = \mathbf{x}^n - \alpha \mathbf{p}$  。
->由于牛顿法的推荐步长是1，这里我们就不额外进行Line Search
+> 由于牛顿法的推荐步长是1，这里我们就不额外进行Line Search
 
 弹簧能量的Hessian $\mathbf{H}$ 是一个稀疏矩阵（只有相邻的顶点才会在矩阵中有对应的非零元素），我们使用`Eigen::SparseMatrix`来存储。
 
@@ -295,7 +281,7 @@ Eigen::SparseMatrix<double> MassSpring::computeHessianSparse(double stiffness)
     {
         // --------------------------------------------------
         // HW_TODO: Implement the sparse version Hessian computation
-      
+
         // --------------------------------------------------
     }
     H.makeCompressed(); 
@@ -303,6 +289,7 @@ Eigen::SparseMatrix<double> MassSpring::computeHessianSparse(double stiffness)
     return H;
 }
 ```
+
 然后实现`step`函数中隐式时间积分部分的代码，你需要构建出方程组(8)然后求解 $\Delta \mathbf{x}$ , 然后更新 $\mathbf{x}$ 。在求解方程组时，我们提供了`flatten`与`unflatten`函数将 $\mathbf{R}^{n \times 3}$ 与 $\mathbf{R}^{3n}$ 的向量进行互相转换: 
 
 ```C++
@@ -322,24 +309,23 @@ Eigen::SparseMatrix<double> MassSpring::computeHessianSparse(double stiffness)
         Eigen::MatrixXd delta_X_flatten = solver.solve(grad_E_flatten);
         ...
         // Other necessary code
-        
+
     }
 ```
 
 > 能量 $g$ 的Hessian的正定性问题：牛顿法并不是无条件收敛，也就是牛顿法给出的下降方向不一定能够使得能量真的下降！即不满足 $((\nabla^2 g)^{-1}\nabla g)^{\top} \nabla g > 0$ . 只有 $\nabla^2 g$ 正定的时候才能保证收敛。
 > 
 > 你可以首先不管这个问题，看看仿真结果如何。如果出现问题，为了让 $\nabla^2 g$ 正定，你可以尝试（三选1，推荐1）：
+> 
 > 1. 在计算弹簧能量的Hessian时，**当 $L_i > \|\mathbf{x}_i \|$ 时**，令第 $i$ 根弹簧 $\mathbf{H}_i$ 近似为 $\mathbf{H}_i \approx k \frac{\mathbf{x}_i {\mathbf{x}_i}^\top}{\|\mathbf{x}_i\|^2}$ . 
 > 2. 为 $\nabla^2 g$ 对角线加上 $\epsilon \mathbf{I}$， $\epsilon$ 为可调参数，来让Hessian最小的特征值大于0. 
 > 3. 对 $\nabla^2 g$ 做SVD分解，然后精确地获取其最小特征值，令其大于0，再重新用SVD得到新的Hessian（速度预期会很慢）
-> 
 
 慢着，如果要在这个求解过程中固定点，怎么办？如果仍然是解完之后将固定点的位置简单地设置回去，就会出现下面边界区域被过度拉长的情况：
 
 <div  align="center">    
  <img src="../images/fail-bc.png" style="zoom:30%" />
 </div>
-
 
 问题根源还是要在求解的时候考虑硬约束。
 
@@ -357,7 +343,6 @@ $$
 \mathbf{V} = (\mathbf{X}^{\text{new}} - \mathbf{X}^{\text{old}}) / h  
 $$  
 
-
 如果实现正确，将1. 劲度系数`stiffness`(如100-1000)和2.时间步长`h`（如0.01）设置为合理的值（隐式时间积分不需要调阻尼系数），并考虑了Hessian的正定性：就可以看到下面的仿真结果（gif经过加速），可以实现比半隐式时间积分大20倍甚至更多的时间步长（但由于需要组装Hessian并求解线性方程组，隐式时间积分每一步的时间会比半隐式时间积分长）：
 
 <div  align="center">    
@@ -365,12 +350,12 @@ $$
 </div>
 
 如果你需要测量性能，我们在程序中提供了`TIC`和`TOC`宏来打印程序运行时间，使用方式如下（在`enable_time_profiling = true`的时候会print出结果）
+
 ```C++
 TIC(function to profile)
 your_function(); 
 TOC(function to profile)
 ```
-
 
 那么实现到这里，恭喜你，你已经完成了本次作业的必做部分！
 
@@ -402,7 +387,6 @@ $$
 
 其中 $\mathbf{c}$ 为球心， $r$    为球半径， $s$   为半径的一个放大系数（如让 $s$ =1.1），用于在实际未发生接触时就产生接触力以减少视觉上的穿透（程序中为`collsiion_scale_factor`）, $k^{\text{penalty}}$ 为可调参数。
 
-
 需要在`MassSpring`的`getSphereCollisionForce`函数中实现下面的部分：
 
 ```C++
@@ -414,7 +398,7 @@ Eigen::MatrixXd MassSpring::getSphereCollisionForce(Eigen::Vector3d center, doub
     for(int i = 0; i < X.rows(); i++)
     {
         // HW_Optional_TODO: implement penalty-based collision force 
-     
+
     }
     return force;
 }
@@ -423,15 +407,14 @@ Eigen::MatrixXd MassSpring::getSphereCollisionForce(Eigen::Vector3d center, doub
 
 如果实现正确并调整了合适的参数（如果发生爆炸，记得检查Hessian正定性并做相应的处理），可以看到下面的结果：
 
-
 <div  align="center">    
  <img src="../images/implicit-with-collision.gif" style="zoom:80%" />
 </div>
 
-
 至此，你已经实现了一个基础的带与球碰撞的弹簧指导仿真系统。但是基于惩罚力的方式无法保证不穿透，需要手动调惩罚力的因子。
 
 > 拓展思考：
+> 
 > 1. 从能量的观点去解决碰撞？-> 如何建模关于物体间距离的能量？能否把球与布料之间的碰撞写成类似弹簧质点能量的形式？
 > 
 > 2. 如果要保证严格不穿透，如何做？（提示：可以将发生“碰撞后不穿透”建模为约束，回到求解带约束优化问题的思路。求解带约束优化问题的常用方法有：序列二次规划（SQP）、增广拉格朗日乘子法、内点法等）
@@ -443,10 +426,6 @@ Eigen::MatrixXd MassSpring::getSphereCollisionForce(Eigen::Vector3d center, doub
 如何加速？我们将在[Part2](./README-part2.md)进行介绍，这也是本次作业的选做内容。
 
 ## 参考资料
+
 1. GAMES 103 Lecture 2 & 5 
 2. [布料系统原理浅析和在Unity手游中的应用](https://blog.uwa4d.com/archives/2008.html#:~:text=%E8%80%8C%E7%8E%B0%E4%BB%A3%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%92%8C%E9%9B%86%E6%88%90%E7%9A%84%E6%A8%A1%E5%9E%8B%E9%80%9A%E5%B8%B8%E6%98%AF%E5%9F%BA%E4%BA%8E%E7%89%A9%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E8%B4%A8%E7%82%B9%2D%E5%BC%B9%E7%B0%A7%E6%A8%A1%E5%9E%8B%EF%BC%88Mass%2DSpring%20Model%EF%BC%89)
-
-
-
-
-

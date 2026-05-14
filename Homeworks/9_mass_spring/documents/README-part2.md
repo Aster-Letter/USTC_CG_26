@@ -1,4 +1,4 @@
- # 弹簧质点系统仿真简明教程 Part 2 之加速方法
+# 弹簧质点系统仿真简明教程 Part 2 之加速方法
 
 如果你已经完成了Part 1，那么欢迎你来到弹簧质点系统仿真的进阶教程。我们将介绍刘天添老师在论文[Fast Simulation of Mass-Spring Systems](https://tiantianliu.cn/papers/liu13fast/liu13fast.pdf)中提出的加速方法，并解释论文中公式的含义。
 
@@ -47,7 +47,6 @@ i-th spring indicator"，它们的构建如下所示：
 <div  align="center">    
  <img src="../images/A_illustration.png" style="zoom:60%" />
 </div>
-
 
 <div  align="center">    
  <img src="../images/S_illustration.png" style="zoom:60%" />
@@ -112,10 +111,9 @@ $$
  <img src="../images/liu13-pipeline.png" style="zoom:100%" />
 </div>
 
-
 在本次作业中，你需要完成的是`FastMassSpring`类中构造函数中的 $\mathbf{A}$ 的计算与预分解：
 
-```C++ 
+```C++
 FastMassSpring::FastMassSpring(const Eigen::MatrixXd& X, const EdgeSet& E) : MassSpring(X, E)
 {
     unsigned n_vertices = X.rows();
@@ -135,9 +133,9 @@ FastMassSpring::FastMassSpring(const Eigen::MatrixXd& X, const EdgeSet& E) : Mas
 void FastMassSpring::step()
 {
     // for (unsigned iter = 0; iter < max_iter; iter++) {
-        
+
         // Local-Global alternating solving
-    
+
     // }
 }
 ```
@@ -150,7 +148,6 @@ void FastMassSpring::step()
 
 此次作业所需要连接的节点图与Part 1一样，只需要通过打开开关`enable Liu13`来切换到该加速方法。建议使用`Release`模式编译来减少节点图其他部分的时间代价。如果想凸显加速方法相比于Part 1部分方法的优势，可以增加mesh分辨率，如使用`grid40x40.usda`.
 
-
 值得一提的是，Liu指出，这一加速方法在迭代次数增加时的结果会逐渐接近Newton法求解的结果，如下图所示。**鼓励大家在报告中包含不同迭代次数的仿真结果的比较**。
 
 <div  align="center">    
@@ -158,10 +155,10 @@ void FastMassSpring::step()
 </div>
 
 > 扩展思考：最后值得一提的是，该加速方法前期收敛速度快，但是后期残差下降慢。为什么？
+> 
 > <div  align="center">    
 > <img src="../images/liu13-results.png" style="zoom:80%" />
 > </div>
-
 
 ## 3. 总结与展望
 
@@ -172,5 +169,6 @@ void FastMassSpring::step()
 > 拓展思考：既然我们可以从能量最优化的角度去求解弹性体仿真问题，那么可以从最优化领域引入更多的求解/加速方法，如使用拟牛顿法及其变种（图形学中常用的是L-BFGS）等。
 
 ### 参考资料
+
 1. 论文[Fast Simulation of Mass-Spring Systems](https://tiantianliu.cn/papers/liu13fast/liu13fast.pdf)
 2. [SIGGRAPH Asia 2013 Talk](https://www.youtube.com/watch?v=vmdBHde8BL8)
